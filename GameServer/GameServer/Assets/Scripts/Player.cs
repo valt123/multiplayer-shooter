@@ -96,12 +96,11 @@ public class Player : MonoBehaviour
         {
             if (_hit.collider.CompareTag("Player"))
             {
-                _hit.collider.GetComponent<Player>().TakeDamage(50f);
+                _hit.collider.GetComponent<Player>().TakeDamage(25f);
             }
 
             ServerSend.PlayerShootLine(this, _hit.point);
         }
-        
     }
 
     public void TakeDamage(float _damage)
@@ -117,7 +116,7 @@ public class Player : MonoBehaviour
         {
             health = 0f;
             controller.enabled = false;
-            transform.position = new Vector3(0f, 25f, 0f);
+            transform.position = NetworkManager.randomSpawn();
             ServerSend.PlayerPosition(this);
             StartCoroutine(Respawn());
         }

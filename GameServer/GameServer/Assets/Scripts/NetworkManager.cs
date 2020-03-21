@@ -38,6 +38,14 @@ public class NetworkManager : MonoBehaviour
 
     public Player InstantiatePlayer()
     {
-        return Instantiate(playerPrefab, new Vector3(0f, 0.5f, 0f), Quaternion.identity).GetComponent<Player>();
+        return Instantiate(playerPrefab, randomSpawn(), Quaternion.identity).GetComponent<Player>();
+    }
+
+    public static Vector3 randomSpawn()
+    {
+        float x = Random.Range(5, 45);
+        float y = 10;
+        float z = Random.Range(4, 46);
+        return new Vector3(x, y, z);
     }
 }
