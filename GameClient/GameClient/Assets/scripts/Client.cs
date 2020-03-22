@@ -41,13 +41,13 @@ public class Client : MonoBehaviour
     private void Start()
     {
         tcp = new TCP();
-        udp = new UDP();
-
     }
 
     public void ConnectToServer(string _ipAddress)
     {
         ip = _ipAddress;
+        udp = new UDP();
+
         InitializeClientData();
 
         isConnected = true;
@@ -196,6 +196,7 @@ public class Client : MonoBehaviour
 
         public UDP()
         {
+            Debug.Log(instance.ip);
             endPoint = new IPEndPoint(IPAddress.Parse(instance.ip), instance.port);
         }
 
