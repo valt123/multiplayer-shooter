@@ -14,6 +14,10 @@ public class Player : MonoBehaviour
     public float health;
     public float maxHealth = 100f;
 
+    private float fireRate = 10f;
+    private float lastFired = 0f;
+    private float nextTimeToFire = 0f;
+
     private bool[] inputs;
     private float yVelocity = 0;
 
@@ -90,19 +94,51 @@ public class Player : MonoBehaviour
         transform.rotation = _rotation;
     }
 
-    public void Shoot(Vector3 _viewDirection)
+    public void Shoot(Vector3 _shootDirection)
     {
-        if (Physics.Raycast(shootOrigin.position, _viewDirection, out RaycastHit _hit, 25f))
+        if (Time.time >= nextTimeToFire)
+        {
+            nextTimeToFire = Time.time + 1 / fireRate;
+            _shootDirection = Recoil(_shootDirection);
+
+            FireWeapon(_shootDirection);
+
+            lastFired = Time.time;
+        }
+    }
+
+    private Vector3 Recoil(Vector3 _shootDirection)
+    {
+        float verticalRecoil = 0f;
+
+        if (Time.time - lastFired <= 0.1f)
+        {
+            verticalRecoil = 0.3f;
+        }
+
+        float randX = Random.Range(-.01f, .01f);
+        float randY = Random.Range(0f, verticalRecoil);
+        return _shootDirection += new Vector3(randX, randY, 0);
+    }
+
+    private void FireWeapon(Vector3 _shootDirection)
+    {
+        if (Physics.Raycast(shootOrigin.position, _shootDirection, out RaycastHit _hit, 50f))
         {
             if (_hit.collider.CompareTag("Player"))
             {
                 _hit.collider.GetComponent<Player>().TakeDamage(25f);
             }
 
-            ServerSend.PlayerShootLine(this, _hit.point);
+            ServerSend.PlayerShootReceived(this, _hit.point);
+        }
+        else
+        {
+            Vector3 _target = shootOrigin.position + (_shootDirection.normalized * 50f);
+            ServerSend.PlayerShootReceived(this, _target);
         }
     }
-
+    
     public void TakeDamage(float _damage)
     {
         if (health <= 0)

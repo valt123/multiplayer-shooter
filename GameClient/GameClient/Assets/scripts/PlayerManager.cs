@@ -41,7 +41,7 @@ public class PlayerManager : MonoBehaviour
         SetHealth(maxHealth);
     }
 
-    public void Shoot(Vector3 _endPosition)
+    public void ShootReceived(Vector3 _endPosition)
     {
         LineRenderer line = shootOrigin.GetComponent<LineRenderer>();
 
@@ -59,7 +59,7 @@ public class PlayerManager : MonoBehaviour
         line.SetPosition(0, shootOrigin.transform.position);
         line.SetPosition(1, _endPosition);
 
-        Destroy(line, 0.1f);
+        Destroy(line, 0.05f);
     }
 
     public void NameText()

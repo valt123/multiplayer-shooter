@@ -288,7 +288,7 @@ public class Client : MonoBehaviour
             { (int)ServerPackets.playerDisconnected, ClientHandle.PlayerDisconnect },
             { (int)ServerPackets.playerHealth, ClientHandle.PlayerHealth },
             { (int)ServerPackets.playerRespawned, ClientHandle.PlayerRespawned },
-            { (int)ServerPackets.playerShootLine, ClientHandle.PlayerShootLine }
+            { (int)ServerPackets.playerShootReceived, ClientHandle.PlayerShootReceived }
         };
         Debug.Log("Initizalised packets");
     }

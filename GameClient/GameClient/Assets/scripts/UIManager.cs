@@ -35,10 +35,10 @@ public class UIManager : MonoBehaviour
 
     public void ConnectToServer()
     {
-        startMenu.SetActive(false);
+        hud.SetActive(false);
         usernameField.interactable = false;
 
-        if (ipAddress.text == "localhost")
+        if (ipAddress.text == "localhost" || ipAddress.text == "")
         {
             ipAddress.text = "127.0.0.1";
         }
@@ -46,12 +46,13 @@ public class UIManager : MonoBehaviour
         try
         {
             Client.instance.ConnectToServer(ipAddress.text);
-            //hud.SetActive(true);
+
+            startMenu.SetActive(false);
+            hud.SetActive(true);
         }
         catch(Exception _ex)
         {
             Debug.Log($"There was an error connecting to the server: {_ex}");
-            startMenu.SetActive(true);
         }
         
     }

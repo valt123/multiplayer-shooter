@@ -5,10 +5,12 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     public Transform camTransform;
+    private float fireRate = 10f;
+    private float nextTimeToFire = 0f;
 
     public void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Mouse0))
+        if (Input.GetKey(KeyCode.Mouse0))
         {
             ClientSend.PlayerShoot(camTransform.forward);
         }
