@@ -14,9 +14,12 @@ public class Player : MonoBehaviour
     public float health;
     public float maxHealth = 100f;
 
-    private float fireRate = 10f;
+    private float fireRate = 20f;
     private float lastFired = 0f;
     private float nextTimeToFire = 0f;
+    private float verticalRecoil = 0f;
+    private int ammoCapacity = 50;
+    private bool reloading = false;
 
     private bool[] inputs;
     private float yVelocity = 0;
@@ -101,20 +104,32 @@ public class Player : MonoBehaviour
             nextTimeToFire = Time.time + 1 / fireRate;
             _shootDirection = Recoil(_shootDirection);
 
-            FireWeapon(_shootDirection);
-
-            lastFired = Time.time;
+            if (ammoCapacity > 0)
+            {
+                if ( !reloading)
+                {
+                    FireWeapon(_shootDirection);
+                }
+            }
         }
     }
 
     private Vector3 Recoil(Vector3 _shootDirection)
     {
-        float verticalRecoil = 0f;
-
-        if (Time.time - lastFired <= 0.1f)
+        if (Time.time - lastFired <= 0.5f)
         {
-            verticalRecoil = 0.3f;
+            if (verticalRecoil <= 0.2f)
+            {
+                verticalRecoil += 0.01f;
+            }
+            
         }
+        else
+        {
+            verticalRecoil = 0f;
+        }
+
+        lastFired = Time.time;
 
         float randX = Random.Range(-.01f, .01f);
         float randY = Random.Range(0f, verticalRecoil);
@@ -137,6 +152,8 @@ public class Player : MonoBehaviour
             Vector3 _target = shootOrigin.position + (_shootDirection.normalized * 50f);
             ServerSend.PlayerShootReceived(this, _target);
         }
+        ammoCapacity -= 1;
+        ServerSend.PlayerAmmoCapacity(this, ammoCapacity);
     }
     
     public void TakeDamage(float _damage)
@@ -160,12 +177,30 @@ public class Player : MonoBehaviour
         ServerSend.PlayerHealth(this);
     }
 
+    public void Reload()
+    {
+        if (!reloading)
+        {
+            reloading = true;
+            StartCoroutine(ReloadWeapon());
+        }
+    }
+
     private IEnumerator Respawn()
     {
-        yield return new WaitForSeconds(5f);
+        yield return new WaitForSeconds(2f);
 
         health = maxHealth;
         controller.enabled = true;
         ServerSend.PlayerRespawned(this);
+    }
+
+    private IEnumerator ReloadWeapon()
+    {
+        yield return new WaitForSeconds(2f);
+
+        ammoCapacity = 50;
+        ServerSend.PlayerAmmoCapacity(this, ammoCapacity);
+        reloading = false;
     }
 }

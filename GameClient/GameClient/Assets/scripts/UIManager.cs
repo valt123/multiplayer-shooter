@@ -13,10 +13,10 @@ public class UIManager : MonoBehaviour
     public InputField ipAddress;
 
     public GameObject hud;
-    public Image hpBg;
-    public Image hpBar;
-
-    public GameObject reticle;
+    public GameObject ammoCapacity;
+    public Text healthText;
+    //public Image hpBg;
+    //public Image hpBar;
 
     private void Awake()
     {
@@ -30,12 +30,12 @@ public class UIManager : MonoBehaviour
             Destroy(this);
         }
 
-        //hud.SetActive(false);
+        hud.SetActive(false);
     }
+
 
     public void ConnectToServer()
     {
-        hud.SetActive(false);
         usernameField.interactable = false;
 
         if (ipAddress.text == "localhost" || ipAddress.text == "")

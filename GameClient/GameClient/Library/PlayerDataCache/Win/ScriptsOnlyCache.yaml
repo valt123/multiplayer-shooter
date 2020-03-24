@@ -62,35 +62,35 @@ ScriptsOnlyBuild:
     - Class: 108
       Script: {instanceID: 0}
     - Class: 114
-      Script: {instanceID: 11150}
+      Script: {instanceID: 11152}
     - Class: 114
-      Script: {instanceID: 11306}
+      Script: {instanceID: 11308}
     - Class: 114
-      Script: {instanceID: 11346}
+      Script: {instanceID: 11348}
     - Class: 114
-      Script: {instanceID: 11382}
+      Script: {instanceID: 11384}
     - Class: 114
-      Script: {instanceID: 11464}
+      Script: {instanceID: 11466}
     - Class: 114
-      Script: {instanceID: 11500}
+      Script: {instanceID: 11502}
     - Class: 114
-      Script: {instanceID: 11738}
+      Script: {instanceID: 11740}
     - Class: 114
-      Script: {instanceID: 11754}
+      Script: {instanceID: 11756}
     - Class: 114
-      Script: {instanceID: 11900}
+      Script: {instanceID: 11902}
     - Class: 114
-      Script: {instanceID: 12066}
+      Script: {instanceID: 12068}
     - Class: 114
-      Script: {instanceID: 12122}
+      Script: {instanceID: 12124}
     - Class: 114
-      Script: {instanceID: 12308}
+      Script: {instanceID: 12310}
     - Class: 114
-      Script: {instanceID: 12598}
+      Script: {instanceID: 12600}
     - Class: 114
-      Script: {instanceID: 12884}
+      Script: {instanceID: 12886}
     - Class: 114
-      Script: {instanceID: 12948}
+      Script: {instanceID: 12950}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -340,7 +340,7 @@ ScriptsOnlyBuild:
     className: Selectable
   - hash:
       serializedVersion: 2
-      Hash: e55d3f387c9471ddcdd22da9df1e9816
+      Hash: ee34ad3d89625222f090f133552555ff
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: UIManager
@@ -376,7 +376,7 @@ ScriptsOnlyBuild:
     className: RemoteTestResultSender
   - hash:
       serializedVersion: 2
-      Hash: 87343bbc95f8e303a718f7f9e60f265a
+      Hash: bef1d2803c5d7f795f7b6457eb1226dd
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: PlayerManager

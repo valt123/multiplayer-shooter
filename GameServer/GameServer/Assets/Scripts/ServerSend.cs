@@ -149,5 +149,17 @@ public class ServerSend
             SendTCPDataToAll(_packet);
         }
     }
+
+    public static void PlayerAmmoCapacity(Player _player, int _ammoCapacity)
+    {
+        using (Packet _packet = new Packet((int)ServerPackets.playerAmmoCapacity))
+        {
+            _packet.Write(_player.id);
+            _packet.Write(_ammoCapacity);
+
+            Debug.Log("Sending ammo capacity");
+            SendTCPData(_player.id, _packet);
+        }
+    }
     #endregion
 }

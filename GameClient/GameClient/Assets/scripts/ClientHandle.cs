@@ -73,4 +73,12 @@ public class ClientHandle : MonoBehaviour
 
         GameManager.players[_id].ShootReceived(_target);
     }
+
+    public static void PlayerAmmoCapacity(Packet _packet)
+    {
+        int _id = _packet.ReadInt();
+        int _ammoCapacity = _packet.ReadInt();
+
+        GameManager.players[_id].AmmoCapacity(_ammoCapacity);
+    }
 }

@@ -8,6 +8,7 @@ public class PlayerManager : MonoBehaviour
     public string username;
     public float health;
     public float maxHealth;
+    public int ammoCapacity = 50;
     public MeshRenderer model;
     public GameObject shootOrigin;
     public GameObject nameText;
@@ -67,5 +68,10 @@ public class PlayerManager : MonoBehaviour
         TextMesh text = nameText.GetComponent<TextMesh>();
 
         text.text = username;
+    }
+
+    public void AmmoCapacity(int _ammoCapacity)
+    {
+        ammoCapacity = _ammoCapacity;
     }
 }
