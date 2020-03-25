@@ -49,7 +49,7 @@ ScriptsOnlyBuild:
       Script: {instanceID: 0}
     - Class: 48
       Script: {instanceID: 0}
-    - Class: 65
+    - Class: 64
       Script: {instanceID: 0}
     - Class: 81
       Script: {instanceID: 0}
@@ -340,7 +340,7 @@ ScriptsOnlyBuild:
     className: Selectable
   - hash:
       serializedVersion: 2
-      Hash: e55d3f387c9471ddcdd22da9df1e9816
+      Hash: de8706575957027a012f783276b3220a
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: UIManager
@@ -376,7 +376,7 @@ ScriptsOnlyBuild:
     className: RemoteTestResultSender
   - hash:
       serializedVersion: 2
-      Hash: 87343bbc95f8e303a718f7f9e60f265a
+      Hash: 58a63239141a7400c08b53fa6f4b4f3b
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: PlayerManager

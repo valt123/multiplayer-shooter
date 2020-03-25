@@ -52,5 +52,14 @@ public class ClientSend : MonoBehaviour
             SendTCPData(_packet);
         }
     }
+
+    public static void PlayerReload()
+    {
+        using (Packet _packet = new Packet((int)ClientPackets.playerReload))
+        {
+            _packet.Write(Client.instance.myId);
+            SendTCPData(_packet);
+        }
+    }
     #endregion;
 }

@@ -38,7 +38,7 @@ public class NetworkManager : MonoBehaviour
 
     public Player InstantiatePlayer()
     {
-        return Instantiate(playerPrefab, randomSpawn(), Quaternion.identity).GetComponent<Player>();
+        return Instantiate(playerPrefab, SpawnManager.SpawnLocation(), Quaternion.identity).GetComponent<Player>();
     }
 
     public static Vector3 randomSpawn()

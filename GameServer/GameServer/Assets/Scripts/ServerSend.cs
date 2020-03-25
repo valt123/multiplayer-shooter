@@ -139,12 +139,33 @@ public class ServerSend
         }
     }
 
-    public static void PlayerShootLine(Player _player, Vector3 _target)
+    public static void PlayerShootReceived(Player _player, Vector3 _target)
     {
-        using (Packet _packet = new Packet((int)ServerPackets.playerShootLine))
+        using (Packet _packet = new Packet((int)ServerPackets.playerShootReceived))
         {
             _packet.Write(_player.id);
             _packet.Write(_target);
+
+            SendTCPDataToAll(_packet);
+        }
+    }
+
+    public static void PlayerIsReloading(Player _player)
+    {
+        using (Packet _packet = new Packet((int)ServerPackets.playerIsReloading))
+        {
+            _packet.Write(_player.id);
+
+            SendTCPDataToAll(_packet);
+        }
+    }
+
+    public static void PlayerAmmoCapacity(Player _player, int _ammoCapacity)
+    {
+        using (Packet _packet = new Packet((int)ServerPackets.playerAmmoCapacity))
+        {
+            _packet.Write(_player.id);
+            _packet.Write(_ammoCapacity);
 
             SendTCPDataToAll(_packet);
         }

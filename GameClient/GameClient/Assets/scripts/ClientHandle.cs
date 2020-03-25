@@ -66,11 +66,26 @@ public class ClientHandle : MonoBehaviour
         GameManager.players[_id].Respawn();
     }
 
-    public static void PlayerShootLine(Packet _packet)
+    public static void PlayerShootReceived(Packet _packet)
     {
         int _id = _packet.ReadInt();
         Vector3 _target = _packet.ReadVector3();
 
-        GameManager.players[_id].Shoot(_target);
+        GameManager.players[_id].ShootReceived(_target);
+    }
+
+    public static void PlayerIsReloading(Packet _packet)
+    {
+        int _id = _packet.ReadInt();
+
+        GameManager.players[_id].PlayerReloading();
+    }
+
+    public static void PlayerAmmoCapacity(Packet _packet)
+    {
+        int _id = _packet.ReadInt();
+        int _ammoCapacity = _packet.ReadInt();
+
+        GameManager.players[_id].AmmoCapacity(_ammoCapacity);
     }
 }

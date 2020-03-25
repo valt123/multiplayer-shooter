@@ -14,6 +14,15 @@ public class Player : MonoBehaviour
     public float health;
     public float maxHealth = 100f;
 
+    private float fireRate = 20f;
+    private float lastFired = 0f;
+    private float nextTimeToFire = 0f;
+    private float verticalRecoil = 0f;
+    private int ammoCapacity = 50;
+    private bool reloading = false;
+    private float damage = 15f;
+    private float reloadSpeed = 3f;
+
     private bool[] inputs;
     private float yVelocity = 0;
 
@@ -39,6 +48,7 @@ public class Player : MonoBehaviour
         {
             return;
         }
+
         Vector2 _inputDirection = Vector2.zero;
 
         if (inputs[0])
@@ -90,19 +100,66 @@ public class Player : MonoBehaviour
         transform.rotation = _rotation;
     }
 
-    public void Shoot(Vector3 _viewDirection)
+    public void Shoot(Vector3 _shootDirection)
     {
-        if (Physics.Raycast(shootOrigin.position, _viewDirection, out RaycastHit _hit, 25f))
+        if (Time.time >= nextTimeToFire)
         {
-            if (_hit.collider.CompareTag("Player"))
+            if (!reloading)
             {
-                _hit.collider.GetComponent<Player>().TakeDamage(25f);
-            }
+                nextTimeToFire = Time.time + 1 / fireRate;
+                _shootDirection = Recoil(_shootDirection);
 
-            ServerSend.PlayerShootLine(this, _hit.point);
+                if (ammoCapacity > 0)
+                {
+                    FireWeapon(_shootDirection);
+                }
+            }
         }
     }
 
+    private Vector3 Recoil(Vector3 _shootDirection)
+    {
+        if (Time.time - lastFired <= 0.5f)
+        {
+            if (verticalRecoil <= 0.2f)
+            {
+                verticalRecoil += 0.01f;
+            }
+            
+        }
+        else
+        {
+            verticalRecoil = 0f;
+        }
+
+        lastFired = Time.time;
+
+        float randX = Random.Range(-.03f, .03f);
+        float randY = Random.Range(0f, verticalRecoil);
+        return _shootDirection += new Vector3(randX, randY, 0);
+    }
+
+    private void FireWeapon(Vector3 _shootDirection)
+    {
+        if (Physics.Raycast(shootOrigin.position, _shootDirection, out RaycastHit _hit, 50f))
+        {
+            if (_hit.collider.CompareTag("Player"))
+            {
+                _hit.collider.GetComponent<Player>().TakeDamage(damage);
+            }
+
+            ServerSend.PlayerShootReceived(this, _hit.point);
+        }
+        else
+        {
+            Vector3 _target = shootOrigin.position + (_shootDirection.normalized * 50f);
+            ServerSend.PlayerShootReceived(this, _target);
+        }
+
+        ammoCapacity -= 1;
+        ServerSend.PlayerAmmoCapacity(this, ammoCapacity);
+    }
+    
     public void TakeDamage(float _damage)
     {
         if (health <= 0)
@@ -116,7 +173,7 @@ public class Player : MonoBehaviour
         {
             health = 0f;
             controller.enabled = false;
-            transform.position = NetworkManager.randomSpawn();
+            transform.position = SpawnManager.SpawnLocation();
             ServerSend.PlayerPosition(this);
             StartCoroutine(Respawn());
         }
@@ -124,12 +181,31 @@ public class Player : MonoBehaviour
         ServerSend.PlayerHealth(this);
     }
 
+    public void Reload()
+    {
+        if (!reloading)
+        {
+            reloading = true;
+            ServerSend.PlayerIsReloading(this);
+            StartCoroutine(ReloadWeapon());
+        }
+    }
+
     private IEnumerator Respawn()
     {
-        yield return new WaitForSeconds(5f);
+        yield return new WaitForSeconds(2f);
 
         health = maxHealth;
         controller.enabled = true;
         ServerSend.PlayerRespawned(this);
+    }
+
+    private IEnumerator ReloadWeapon()
+    {
+        yield return new WaitForSeconds(reloadSpeed);
+
+        ammoCapacity = 50;
+        ServerSend.PlayerAmmoCapacity(this, ammoCapacity);
+        reloading = false;
     }
 }

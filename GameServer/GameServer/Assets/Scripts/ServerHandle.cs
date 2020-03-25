@@ -36,4 +36,9 @@ public class ServerHandle
 
         Server.clients[_fromClient].player.Shoot(_shootDirection);
     }
+
+    public static void PlayerReload(int _fromClient, Packet _packet)
+    {
+        Server.clients[_fromClient].player.Reload();
+    }
 }

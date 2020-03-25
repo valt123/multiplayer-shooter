@@ -8,9 +8,15 @@ public class PlayerController : MonoBehaviour
 
     public void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Mouse0))
+        if (Input.GetKey(KeyCode.Mouse0))
         {
             ClientSend.PlayerShoot(camTransform.forward);
+        }
+
+        if (Input.GetKeyDown(KeyCode.R) && GetComponent<PlayerManager>().ammoCapacity < 50)
+        {
+            ClientSend.PlayerReload();
+            UIManager.AmmoCapacity("Reloading");
         }
     }
 

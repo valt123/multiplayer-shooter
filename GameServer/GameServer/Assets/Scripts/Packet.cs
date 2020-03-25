@@ -15,7 +15,9 @@ public enum ServerPackets
     playerDisconnected,
     playerHealth,
     playerRespawned,
-    playerShootLine
+    playerShootReceived,
+    playerAmmoCapacity,
+    playerIsReloading
 }
 
 /// <summary>Sent from client to server.</summary>
@@ -23,7 +25,8 @@ public enum ClientPackets
 {
     welcomeReceived = 1,
     playerMovement,
-    playerShoot
+    playerShoot,
+    playerReload
 }
 
 public class Packet : IDisposable

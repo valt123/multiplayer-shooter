@@ -8,9 +8,12 @@ public class PlayerManager : MonoBehaviour
     public string username;
     public float health;
     public float maxHealth;
-    public MeshRenderer model;
+    public int ammoCapacity = 50;
+    public MeshRenderer[] model;
     public GameObject shootOrigin;
     public GameObject nameText;
+
+    public GameObject magazine;
 
     public void Initialize(int _id, string _username)
     {
@@ -18,6 +21,8 @@ public class PlayerManager : MonoBehaviour
         username = _username;
         health = maxHealth;
         NameText();
+        UIManager.Health(health, maxHealth);
+        UIManager.AmmoCapacity(ammoCapacity.ToString());
     }
 
     public void SetHealth(float _health)
@@ -28,20 +33,32 @@ public class PlayerManager : MonoBehaviour
         {
             Die();
         }
+
+        if (id == Client.instance.myId)
+        {
+            UIManager.Health(health, maxHealth);
+        }
     }
 
     public void Die()
     {
-        model.enabled = false;
+        foreach (MeshRenderer _model in model )
+        {
+            _model.enabled = false;
+        }
     }
 
     public void Respawn()
     {
-        model.enabled = true;
+        foreach (MeshRenderer _model in model)
+        {
+            _model.enabled = true;
+        }
+
         SetHealth(maxHealth);
     }
 
-    public void Shoot(Vector3 _endPosition)
+    public void ShootReceived(Vector3 _endPosition)
     {
         LineRenderer line = shootOrigin.GetComponent<LineRenderer>();
 
@@ -59,7 +76,7 @@ public class PlayerManager : MonoBehaviour
         line.SetPosition(0, shootOrigin.transform.position);
         line.SetPosition(1, _endPosition);
 
-        Destroy(line, 0.1f);
+        Destroy(line, 0.05f);
     }
 
     public void NameText()
@@ -67,5 +84,26 @@ public class PlayerManager : MonoBehaviour
         TextMesh text = nameText.GetComponent<TextMesh>();
 
         text.text = username;
+    }
+
+    public void PlayerReloading()
+    {
+        GameObject _magazine = Instantiate(magazine, magazine.transform.position, magazine.transform.rotation);
+        magazine.GetComponent<MeshRenderer>().enabled = false;
+
+        _magazine.AddComponent<Rigidbody>();
+
+        Destroy(_magazine, 20f);
+    }
+
+    public void AmmoCapacity(int _ammoCapacity)
+    {
+        ammoCapacity = _ammoCapacity;
+        magazine.GetComponent<MeshRenderer>().enabled = true;
+
+        if (id == Client.instance.myId)
+        {
+            UIManager.AmmoCapacity(ammoCapacity.ToString());
+        }
     }
 }
