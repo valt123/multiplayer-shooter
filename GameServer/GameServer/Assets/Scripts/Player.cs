@@ -20,6 +20,7 @@ public class Player : MonoBehaviour
     private float verticalRecoil = 0f;
     private int ammoCapacity = 50;
     private bool reloading = false;
+    private float damage = 25f;
 
     private bool[] inputs;
     private float yVelocity = 0;
@@ -131,7 +132,7 @@ public class Player : MonoBehaviour
 
         lastFired = Time.time;
 
-        float randX = Random.Range(-.01f, .01f);
+        float randX = Random.Range(-.03f, .03f);
         float randY = Random.Range(0f, verticalRecoil);
         return _shootDirection += new Vector3(randX, randY, 0);
     }
@@ -142,7 +143,7 @@ public class Player : MonoBehaviour
         {
             if (_hit.collider.CompareTag("Player"))
             {
-                _hit.collider.GetComponent<Player>().TakeDamage(25f);
+                _hit.collider.GetComponent<Player>().TakeDamage(damage);
             }
 
             ServerSend.PlayerShootReceived(this, _hit.point);

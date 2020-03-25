@@ -19,6 +19,8 @@ public class PlayerManager : MonoBehaviour
         username = _username;
         health = maxHealth;
         NameText();
+        UIManager.Health(health, maxHealth);
+        UIManager.AmmoCapacity(ammoCapacity.ToString());
     }
 
     public void SetHealth(float _health)
@@ -28,6 +30,11 @@ public class PlayerManager : MonoBehaviour
         if (health <= 0f)
         {
             Die();
+        }
+
+        if (id == Client.instance.myId)
+        {
+            UIManager.Health(health, maxHealth);
         }
     }
 
@@ -73,5 +80,9 @@ public class PlayerManager : MonoBehaviour
     public void AmmoCapacity(int _ammoCapacity)
     {
         ammoCapacity = _ammoCapacity;
+        if (id == Client.instance.myId)
+        {
+            UIManager.AmmoCapacity(ammoCapacity.ToString());
+        }
     }
 }

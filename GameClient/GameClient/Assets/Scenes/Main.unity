@@ -509,7 +509,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+  m_Color: {r: 0.3892928, g: 0.9339623, b: 0.066082224, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -805,8 +805,8 @@ MonoBehaviour:
   usernameField: {fileID: 221947532}
   ipAddress: {fileID: 574399641}
   hud: {fileID: 1076067431}
-  ammoCapacity: {fileID: 0}
-  healthText: {fileID: 0}
+  ammoCapacity: {fileID: 1105584665}
+  healthText: {fileID: 471501344}
 --- !u!114 &739693120
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -841,8 +841,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: 0
   username: 
-  health: 0
+  health: 100
   maxHealth: 100
+  ammoCapacity: 50
   model: {fileID: 1116008708178948285}
   shootOrigin: {fileID: 2606434944417081980}
   nameText: {fileID: 3994541875029481486}

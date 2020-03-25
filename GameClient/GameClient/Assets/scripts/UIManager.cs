@@ -13,7 +13,7 @@ public class UIManager : MonoBehaviour
     public InputField ipAddress;
 
     public GameObject hud;
-    public GameObject ammoCapacity;
+    public Text ammoCapacity;
     public Text healthText;
     //public Image hpBg;
     //public Image hpBar;
@@ -33,6 +33,17 @@ public class UIManager : MonoBehaviour
         hud.SetActive(false);
     }
 
+    public static void AmmoCapacity(string _ammoCapacity)
+    {
+        instance.ammoCapacity.text = _ammoCapacity;
+    }
+
+    public static void Health(float _health, float _maxHealth)
+    {
+        instance.healthText.text = $"{_health}/{_maxHealth}";
+    }
+
+    
 
     public void ConnectToServer()
     {
