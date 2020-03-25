@@ -49,7 +49,7 @@ ScriptsOnlyBuild:
       Script: {instanceID: 0}
     - Class: 48
       Script: {instanceID: 0}
-    - Class: 65
+    - Class: 64
       Script: {instanceID: 0}
     - Class: 81
       Script: {instanceID: 0}
@@ -376,7 +376,7 @@ ScriptsOnlyBuild:
     className: RemoteTestResultSender
   - hash:
       serializedVersion: 2
-      Hash: bef1d2803c5d7f795f7b6457eb1226dd
+      Hash: 58a63239141a7400c08b53fa6f4b4f3b
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: PlayerManager

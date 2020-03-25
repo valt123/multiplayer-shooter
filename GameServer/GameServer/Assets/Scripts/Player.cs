@@ -20,7 +20,8 @@ public class Player : MonoBehaviour
     private float verticalRecoil = 0f;
     private int ammoCapacity = 50;
     private bool reloading = false;
-    private float damage = 25f;
+    private float damage = 15f;
+    private float reloadSpeed = 3f;
 
     private bool[] inputs;
     private float yVelocity = 0;
@@ -47,6 +48,7 @@ public class Player : MonoBehaviour
         {
             return;
         }
+
         Vector2 _inputDirection = Vector2.zero;
 
         if (inputs[0])
@@ -102,12 +104,12 @@ public class Player : MonoBehaviour
     {
         if (Time.time >= nextTimeToFire)
         {
-            nextTimeToFire = Time.time + 1 / fireRate;
-            _shootDirection = Recoil(_shootDirection);
-
-            if (ammoCapacity > 0)
+            if (!reloading)
             {
-                if ( !reloading)
+                nextTimeToFire = Time.time + 1 / fireRate;
+                _shootDirection = Recoil(_shootDirection);
+
+                if (ammoCapacity > 0)
                 {
                     FireWeapon(_shootDirection);
                 }
@@ -153,6 +155,7 @@ public class Player : MonoBehaviour
             Vector3 _target = shootOrigin.position + (_shootDirection.normalized * 50f);
             ServerSend.PlayerShootReceived(this, _target);
         }
+
         ammoCapacity -= 1;
         ServerSend.PlayerAmmoCapacity(this, ammoCapacity);
     }
@@ -170,7 +173,7 @@ public class Player : MonoBehaviour
         {
             health = 0f;
             controller.enabled = false;
-            transform.position = NetworkManager.randomSpawn();
+            transform.position = SpawnManager.SpawnLocation();
             ServerSend.PlayerPosition(this);
             StartCoroutine(Respawn());
         }
@@ -183,6 +186,7 @@ public class Player : MonoBehaviour
         if (!reloading)
         {
             reloading = true;
+            ServerSend.PlayerIsReloading(this);
             StartCoroutine(ReloadWeapon());
         }
     }
@@ -198,7 +202,7 @@ public class Player : MonoBehaviour
 
     private IEnumerator ReloadWeapon()
     {
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(reloadSpeed);
 
         ammoCapacity = 50;
         ServerSend.PlayerAmmoCapacity(this, ammoCapacity);

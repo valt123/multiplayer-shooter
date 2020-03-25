@@ -74,6 +74,13 @@ public class ClientHandle : MonoBehaviour
         GameManager.players[_id].ShootReceived(_target);
     }
 
+    public static void PlayerIsReloading(Packet _packet)
+    {
+        int _id = _packet.ReadInt();
+
+        GameManager.players[_id].PlayerReloading();
+    }
+
     public static void PlayerAmmoCapacity(Packet _packet)
     {
         int _id = _packet.ReadInt();

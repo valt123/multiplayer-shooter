@@ -9,9 +9,11 @@ public class PlayerManager : MonoBehaviour
     public float health;
     public float maxHealth;
     public int ammoCapacity = 50;
-    public MeshRenderer model;
+    public MeshRenderer[] model;
     public GameObject shootOrigin;
     public GameObject nameText;
+
+    public GameObject magazine;
 
     public void Initialize(int _id, string _username)
     {
@@ -40,12 +42,19 @@ public class PlayerManager : MonoBehaviour
 
     public void Die()
     {
-        model.enabled = false;
+        foreach (MeshRenderer _model in model )
+        {
+            _model.enabled = false;
+        }
     }
 
     public void Respawn()
     {
-        model.enabled = true;
+        foreach (MeshRenderer _model in model)
+        {
+            _model.enabled = true;
+        }
+
         SetHealth(maxHealth);
     }
 
@@ -77,9 +86,21 @@ public class PlayerManager : MonoBehaviour
         text.text = username;
     }
 
+    public void PlayerReloading()
+    {
+        GameObject _magazine = Instantiate(magazine, magazine.transform.position, magazine.transform.rotation);
+        magazine.GetComponent<MeshRenderer>().enabled = false;
+
+        _magazine.AddComponent<Rigidbody>();
+
+        Destroy(_magazine, 20f);
+    }
+
     public void AmmoCapacity(int _ammoCapacity)
     {
         ammoCapacity = _ammoCapacity;
+        magazine.GetComponent<MeshRenderer>().enabled = true;
+
         if (id == Client.instance.myId)
         {
             UIManager.AmmoCapacity(ammoCapacity.ToString());
