@@ -25,6 +25,11 @@ public class PlayerManager : MonoBehaviour
         UIManager.AmmoCapacity(ammoCapacity.ToString());
     }
 
+    private void Update()
+    {
+        TurnNameTextTowardLocalPlayer();
+    }
+
     public void SetHealth(float _health)
     {
         health = _health;
@@ -84,6 +89,11 @@ public class PlayerManager : MonoBehaviour
         TextMesh text = nameText.GetComponent<TextMesh>();
 
         text.text = username;
+    }
+
+    void TurnNameTextTowardLocalPlayer()
+    {
+        nameText.transform.LookAt(2 * nameText.transform.position - GameManager.players[Client.instance.myId].transform.position);
     }
 
     public void PlayerReloading()
