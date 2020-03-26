@@ -10,7 +10,8 @@ public class Player : MonoBehaviour
     public Transform shootOrigin;
     public float gravity = -9.81f;
     public float moveSpeed = 5f;
-    public float jumpSpeed = 5f;
+    public float sprintSpeed = 10f;
+    public float jumpSpeed = 10f;
     public float health;
     public float maxHealth = 100f;
 
@@ -30,6 +31,7 @@ public class Player : MonoBehaviour
     {
         gravity *= Time.fixedDeltaTime * Time.fixedDeltaTime;
         moveSpeed *= Time.fixedDeltaTime;
+        sprintSpeed *= Time.fixedDeltaTime;
         jumpSpeed *= Time.fixedDeltaTime;
     }
 
@@ -39,7 +41,7 @@ public class Player : MonoBehaviour
         username = _username;
         health = maxHealth;
 
-        inputs = new bool[5];
+        inputs = new bool[6];
     }
 
     public void FixedUpdate()
@@ -67,16 +69,12 @@ public class Player : MonoBehaviour
         {
             _inputDirection.x += 1;
         }
-
+        
         Move(_inputDirection);
     }
 
     private void Move(Vector2 _inputDirection)
     {
-
-        Vector3 _moveDirection = transform.right * _inputDirection.x + transform.forward * _inputDirection.y;
-        _moveDirection *= moveSpeed;
-
         if (controller.isGrounded)
         {
             yVelocity = 0f;
@@ -86,6 +84,12 @@ public class Player : MonoBehaviour
             }
         }
         yVelocity += gravity;
+
+        Vector3 _moveDirection = transform.right * _inputDirection.x + transform.forward * _inputDirection.y;
+
+        float _moveSpeed = inputs[5] ? sprintSpeed : moveSpeed;
+
+         _moveDirection = Vector3.ClampMagnitude(_moveDirection, 1f) * _moveSpeed;
 
         _moveDirection.y = yVelocity;
         controller.Move(_moveDirection);
@@ -132,8 +136,6 @@ public class Player : MonoBehaviour
             verticalRecoil = 0f;
         }
 
-        lastFired = Time.time;
-
         float randX = Random.Range(-.03f, .03f);
         float randY = Random.Range(0f, verticalRecoil);
         return _shootDirection += new Vector3(randX, randY, 0);
@@ -158,6 +160,7 @@ public class Player : MonoBehaviour
 
         ammoCapacity -= 1;
         ServerSend.PlayerAmmoCapacity(this, ammoCapacity);
+        lastFired = Time.time;
     }
     
     public void TakeDamage(float _damage)

@@ -82,7 +82,8 @@ MonoBehaviour:
   shootOrigin: {fileID: 7415770129633293726}
   gravity: -9.81
   moveSpeed: 5
-  jumpSpeed: 5
+  sprintSpeed: 10
+  jumpSpeed: 6
   health: 0
   maxHealth: 100
 --- !u!143 &1791487088651200835
