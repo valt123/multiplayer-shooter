@@ -126,20 +126,19 @@ public class Player : MonoBehaviour
 
     private Vector3 Recoil(Vector3 _shootDirection)
     {
-        if (Time.time - lastFired <= 0.5f)
+        if (Time.time - lastFired <= 0.3f)
         {
-            if (verticalRecoil <= 0.2f)
+            if (verticalRecoil <= 0.1f)
             {
                 verticalRecoil += 0.01f;
             }
-            
         }
         else
         {
             verticalRecoil = 0f;
         }
 
-        float randX = Random.Range(-.03f, .03f);
+        float randX = 0;
         float randY = Random.Range(0f, verticalRecoil);
         return _shootDirection += new Vector3(randX, randY, 0);
     }
@@ -199,7 +198,7 @@ public class Player : MonoBehaviour
 
     private IEnumerator Respawn()
     {
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(5f);
 
         health = maxHealth;
         controller.enabled = true;

@@ -10,14 +10,15 @@ public class PlayerManager : MonoBehaviour
     public float health;
     public float maxHealth;
 
+    public Transform tommyGun;
     public int ammoCapacity = 50;
     public GameObject magazine;
+    public Animator boltAnimator;
 
     public MeshRenderer[] model;
 
     public GameObject shootOrigin;
     public GameObject nameText;
-
     public Transform cameraTransform;
 
     public void Initialize(int _id, string _username)
@@ -56,6 +57,12 @@ public class PlayerManager : MonoBehaviour
         {
             _model.enabled = false;
         }
+        nameText.SetActive(false);
+
+        if (id == Client.instance.myId)
+        {
+            UIManager.DeathScreen(true);
+        }
     }
 
     public void Respawn()
@@ -66,9 +73,24 @@ public class PlayerManager : MonoBehaviour
         }
 
         SetHealth(maxHealth);
+        nameText.SetActive(true);
+
+        if (id == Client.instance.myId)
+        {
+            UIManager.DeathScreen(false);
+        }
     }
 
     public void ShootReceived(Vector3 _endPosition)
+    {
+        tommyGun.LookAt(_endPosition);
+
+        ShotTracer(_endPosition);
+        shootOrigin.GetComponent<ParticleSystem>().Play();
+        boltAnimator.Play("Bolt_firing");
+    }
+
+    public void ShotTracer(Vector3 _endPosition)
     {
         LineRenderer line = shootOrigin.GetComponent<LineRenderer>();
 
@@ -76,12 +98,12 @@ public class PlayerManager : MonoBehaviour
         {
             line = shootOrigin.AddComponent<LineRenderer>();
         }
-        
+
         line.startWidth = 0.05f;
         line.endWidth = 0.05f;
         line.material = new Material(Shader.Find("Sprites/Default"));
-        line.startColor = new Color(1, 0, 0);
-        line.endColor = new Color(1, 0, 0);
+        line.startColor = new Color(1, 1, 1, 1);
+        line.endColor = new Color(1, 1, 1, 1);
 
         line.SetPosition(0, shootOrigin.transform.position);
         line.SetPosition(1, _endPosition);
@@ -91,9 +113,9 @@ public class PlayerManager : MonoBehaviour
 
     public void NameText()
     {
-        TextMesh text = nameText.GetComponent<TextMesh>();
+        TextMesh _text = nameText.GetComponent<TextMesh>();
 
-        text.text = username;
+        _text.text = username;
     }
 
     void TurnNameTextTowardLocalPlayer()

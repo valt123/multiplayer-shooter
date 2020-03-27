@@ -18,6 +18,8 @@ public class UIManager : MonoBehaviour
     //public Image hpBg;
     //public Image hpBar;
 
+    public GameObject deathScreen;
+
     private void Awake()
     {
         if (instance == null)
@@ -43,7 +45,10 @@ public class UIManager : MonoBehaviour
         instance.healthText.text = $"{_health}/{_maxHealth}";
     }
 
-    
+    public static void DeathScreen(bool _isDead)
+    {
+        instance.deathScreen.SetActive(_isDead);
+    }
 
     public void ConnectToServer()
     {
