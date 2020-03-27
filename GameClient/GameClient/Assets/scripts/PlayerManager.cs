@@ -6,14 +6,19 @@ public class PlayerManager : MonoBehaviour
 {
     public int id;
     public string username;
+
     public float health;
     public float maxHealth;
+
     public int ammoCapacity = 50;
+    public GameObject magazine;
+
     public MeshRenderer[] model;
+
     public GameObject shootOrigin;
     public GameObject nameText;
 
-    public GameObject magazine;
+    public Transform cameraTransform;
 
     public void Initialize(int _id, string _username)
     {

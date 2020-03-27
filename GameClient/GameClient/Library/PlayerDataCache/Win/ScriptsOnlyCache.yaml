@@ -328,7 +328,7 @@ ScriptsOnlyBuild:
     className: RemoteTestResultSender
   - hash:
       serializedVersion: 2
-      Hash: 58a63239141a7400c08b53fa6f4b4f3b
+      Hash: 10a80e6ac51f84970eee0cfe0ea1c34a
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: PlayerManager
