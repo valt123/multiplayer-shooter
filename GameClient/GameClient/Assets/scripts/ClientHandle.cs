@@ -39,8 +39,10 @@ public class ClientHandle : MonoBehaviour
     {
         int _id = _packet.ReadInt();
         Quaternion _rotation = _packet.ReadQuaternion();
+        Quaternion _cameraRotation = _packet.ReadQuaternion();
 
         GameManager.players[_id].transform.rotation = _rotation;
+        GameManager.players[_id].cameraTransform.rotation = _cameraRotation;
     }
 
     public static void PlayerDisconnect(Packet _packet)

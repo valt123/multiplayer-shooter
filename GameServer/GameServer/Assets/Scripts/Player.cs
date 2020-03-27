@@ -8,6 +8,8 @@ public class Player : MonoBehaviour
     public string username;
     public CharacterController controller;
     public Transform shootOrigin;
+    public Transform facing;
+
     public float gravity = -9.81f;
     public float moveSpeed = 5f;
     public float sprintSpeed = 10f;
@@ -98,10 +100,11 @@ public class Player : MonoBehaviour
         ServerSend.PlayerRotation(this);
     }
 
-    public void SetInput(bool[] _inputs, Quaternion _rotation)
+    public void SetInput(bool[] _inputs, Quaternion _rotation, Quaternion _cameraRotation)
     {
         inputs = _inputs;
         transform.rotation = _rotation;
+        facing.rotation = _cameraRotation;
     }
 
     public void Shoot(Vector3 _shootDirection)

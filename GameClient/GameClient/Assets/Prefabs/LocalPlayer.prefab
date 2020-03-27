@@ -339,7 +339,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &202247319231633678
 Transform:
   m_ObjectHideFlags: 0
@@ -640,11 +640,12 @@ MonoBehaviour:
   health: 100
   maxHealth: 100
   ammoCapacity: 50
+  magazine: {fileID: 7476130922107904114}
   model:
   - {fileID: 1116008708178948285}
   shootOrigin: {fileID: 2606434944417081980}
   nameText: {fileID: 3994541875029481486}
-  magazine: {fileID: 7476130922107904114}
+  cameraTransform: {fileID: 8382289016053550174}
 --- !u!114 &5595816870030571876
 MonoBehaviour:
   m_ObjectHideFlags: 0
