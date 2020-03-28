@@ -38,14 +38,11 @@ public class Client : MonoBehaviour
         }
     }
 
-    private void Start()
-    {
-        tcp = new TCP();
-    }
-
     public void ConnectToServer(string _ipAddress)
     {
         ip = _ipAddress;
+
+        tcp = new TCP();
         udp = new UDP();
 
         InitializeClientData();
@@ -71,19 +68,21 @@ public class Client : MonoBehaviour
             };
 
             receiveBuffer = new byte[dataBufferSize];
-            socket.BeginConnect(instance.ip, instance.port, ConnectCallback, socket);
+            var _result = socket.BeginConnect(instance.ip, instance.port, null, null);
+            _result.AsyncWaitHandle.WaitOne(TimeSpan.FromSeconds(5));
 
+            if (!socket.Connected)
+            {
+                Debug.Log("Not connected");
+                throw new Exception("Could not connect");
+            }
+
+            ConnectCallback(_result);
         }
 
         private void ConnectCallback(IAsyncResult _result)
         {
             socket.EndConnect(_result);
-
-            if (!socket.Connected)
-            {
-                Debug.Log("Not connected");
-                return;
-            }
 
             stream = socket.GetStream();
 
@@ -290,18 +289,27 @@ public class Client : MonoBehaviour
             { (int)ServerPackets.playerRespawned, ClientHandle.PlayerRespawned },
             { (int)ServerPackets.playerShootReceived, ClientHandle.PlayerShootReceived },
             { (int)ServerPackets.playerIsReloading, ClientHandle.PlayerIsReloading },
-            { (int)ServerPackets.playerAmmoCapacity, ClientHandle.PlayerAmmoCapacity }
+            { (int)ServerPackets.playerAmmoCapacity, ClientHandle.PlayerAmmoCapacity },
+            { (int)ServerPackets.playerKills, ClientHandle.PlayerKills }
         };
         Debug.Log("Initizalised packets");
     }
 
-    private void Disconnect()
+    public void Disconnect()
     {
         if (isConnected)
         {
             isConnected = false;
             tcp.socket.Close();
             udp.socket.Close();
+
+            foreach(var _key in GameManager.players.Keys)
+            {
+                Destroy(GameManager.players[_key].gameObject);
+            }
+            
+            GameManager.players.Clear();
+            myId = 0;
 
             Debug.Log("Disconnected from the server.");
         }

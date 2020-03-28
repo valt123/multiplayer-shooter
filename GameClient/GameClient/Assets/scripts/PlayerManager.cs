@@ -10,6 +10,9 @@ public class PlayerManager : MonoBehaviour
     public float health;
     public float maxHealth;
 
+    public int kills;
+    public int deaths;
+
     public Transform tommyGun;
     public int ammoCapacity = 50;
     public GameObject magazine;
@@ -114,8 +117,10 @@ public class PlayerManager : MonoBehaviour
     public void NameText()
     {
         TextMesh _text = nameText.GetComponent<TextMesh>();
-
-        _text.text = username;
+        if (Client.instance.myId != id)
+        {
+            _text.text = username;
+        }
     }
 
     void TurnNameTextTowardLocalPlayer()

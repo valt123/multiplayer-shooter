@@ -171,5 +171,16 @@ public class ServerSend
             SendTCPDataToAll(_packet);
         }
     }
+
+    public static void PlayerKills(Player _killer, Player _killed)
+    {
+        using (Packet _packet = new Packet((int)ServerPackets.playerKills))
+        {
+            _packet.Write(_killer.id);
+            _packet.Write(_killed.id);
+
+            SendTCPDataToAll(_packet);
+        }
+    }
     #endregion
 }

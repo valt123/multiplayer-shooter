@@ -8,7 +8,7 @@ public class PlayerController : MonoBehaviour
 
     public void Update()
     {
-        if (Input.GetKey(KeyCode.Mouse0))
+        if (Input.GetKey(KeyCode.Mouse0) && Cursor.lockState == CursorLockMode.Locked)
         {
             ClientSend.PlayerShoot(camTransform.forward);
         }
@@ -17,6 +17,15 @@ public class PlayerController : MonoBehaviour
         {
             ClientSend.PlayerReload();
             UIManager.AmmoCapacity("Reloading");
+        }
+
+        if (Input.GetKeyDown(KeyCode.Tab))
+        {
+            UIManager.Scoreboard(true);
+        }
+        else if (Input.GetKeyUp(KeyCode.Tab))
+        {
+            UIManager.Scoreboard(false);
         }
     }
 
@@ -27,16 +36,33 @@ public class PlayerController : MonoBehaviour
 
     private void SendInputToServer()
     {
-        bool[] _inputs = new bool[]
+        if (Cursor.lockState == CursorLockMode.Locked)
         {
-            Input.GetKey(KeyCode.W),
-            Input.GetKey(KeyCode.S),
-            Input.GetKey(KeyCode.A),
-            Input.GetKey(KeyCode.D),
-            Input.GetKey(KeyCode.Space),
-            Input.GetKey(KeyCode.LeftShift)
-        };
+            bool[] _inputs = new bool[]
+            {
+                Input.GetKey(KeyCode.W),
+                Input.GetKey(KeyCode.S),
+                Input.GetKey(KeyCode.A),
+                Input.GetKey(KeyCode.D),
+                Input.GetKey(KeyCode.Space),
+                Input.GetKey(KeyCode.LeftShift)
+            };
 
-        ClientSend.PlayerMovement(_inputs);
+            ClientSend.PlayerMovement(_inputs);
+        }
+        else
+        {
+            bool[] _inputs = new bool[]
+            {
+                false,
+                false,
+                false,
+                false,
+                false,
+                false
+            };
+
+            ClientSend.PlayerMovement(_inputs);
+        }
     }
 }

@@ -90,4 +90,20 @@ public class ClientHandle : MonoBehaviour
 
         GameManager.players[_id].AmmoCapacity(_ammoCapacity);
     }
+
+    public static void PlayerKills(Packet _packet)
+    {
+        var _killerId = _packet.ReadInt();
+        var _killedId = _packet.ReadInt();
+
+        var _killer = GameManager.players[_killerId];
+        var _killed = GameManager.players[_killedId];
+
+        _killer.kills += 1;
+        _killed.deaths += 1;
+
+        UIManager.KillFeed(_killer.username, _killed.username);
+
+        Debug.Log($"{_killer.username} killed {_killed.username} ");
+    }
 }

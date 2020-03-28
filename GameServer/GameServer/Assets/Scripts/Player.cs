@@ -10,24 +10,33 @@ public class Player : MonoBehaviour
     public Transform shootOrigin;
     public Transform facing;
 
+    #region Movement variables
     public float gravity = -9.81f;
     public float moveSpeed = 5f;
     public float sprintSpeed = 10f;
     public float jumpSpeed = 10f;
     public float health;
     public float maxHealth = 100f;
+    #endregion
 
-    private float fireRate = 20f;
+    #region Weapon variables
+    public float fireRate = 20f;
+    public int ammoCapacity = 50;
+    public int maxAmmoCapacity = 50;
+    public float damage = 15f;
+    public float reloadSpeed = 3f;
     private float lastFired = 0f;
     private float nextTimeToFire = 0f;
     private float verticalRecoil = 0f;
-    private int ammoCapacity = 50;
-    private bool reloading = false;
-    private float damage = 15f;
-    private float reloadSpeed = 3f;
+    private bool isReloading = false;
+    private bool isDead = false;
+    #endregion
 
     private bool[] inputs;
     private float yVelocity = 0;
+
+    public int kills = 0;
+    public int deaths = 0;
 
     private void Start()
     {
@@ -74,7 +83,7 @@ public class Player : MonoBehaviour
         
         Move(_inputDirection);
     }
-
+    #region Movement
     private void Move(Vector2 _inputDirection)
     {
         if (controller.isGrounded)
@@ -106,18 +115,19 @@ public class Player : MonoBehaviour
         transform.rotation = _rotation;
         facing.rotation = _cameraRotation;
     }
+    #endregion
 
+    #region Shooting
     public void Shoot(Vector3 _shootDirection)
     {
         if (Time.time >= nextTimeToFire)
         {
-            if (!reloading)
+            if ( CanShoot() )
             {
-                nextTimeToFire = Time.time + 1 / fireRate;
-                _shootDirection = Recoil(_shootDirection);
-
                 if (ammoCapacity > 0)
                 {
+                    nextTimeToFire = Time.time + 1 / fireRate;
+                    _shootDirection = Recoil(_shootDirection);
                     FireWeapon(_shootDirection);
                 }
             }
@@ -139,7 +149,7 @@ public class Player : MonoBehaviour
         }
 
         float randX = 0;
-        float randY = Random.Range(0f, verticalRecoil);
+        float randY = Random.Range(0, verticalRecoil);
         return _shootDirection += new Vector3(randX, randY, 0);
     }
 
@@ -149,7 +159,7 @@ public class Player : MonoBehaviour
         {
             if (_hit.collider.CompareTag("Player"))
             {
-                _hit.collider.GetComponent<Player>().TakeDamage(damage);
+                _hit.collider.GetComponent<Player>().TakeDamage(damage, this.id);
             }
 
             ServerSend.PlayerShootReceived(this, _hit.point);
@@ -164,8 +174,33 @@ public class Player : MonoBehaviour
         ServerSend.PlayerAmmoCapacity(this, ammoCapacity);
         lastFired = Time.time;
     }
-    
-    public void TakeDamage(float _damage)
+
+    public void Reload()
+    {
+        if (!isReloading && !isDead)
+        {
+            isReloading = true;
+            ServerSend.PlayerIsReloading(this);
+            StartCoroutine(ReloadWeapon());
+        }
+    }
+
+    public bool CanShoot()
+    {
+        return isDead || isReloading ? false : true;
+    }
+
+    private IEnumerator ReloadWeapon()
+    {
+        yield return new WaitForSeconds(reloadSpeed);
+
+        ammoCapacity = maxAmmoCapacity;
+        ServerSend.PlayerAmmoCapacity(this, ammoCapacity);
+        isReloading = false;
+    }
+    #endregion
+
+    public void TakeDamage(float _damage, int _damageSourceId)
     {
         if (health <= 0)
         {
@@ -180,20 +215,22 @@ public class Player : MonoBehaviour
             controller.enabled = false;
             transform.position = SpawnManager.SpawnLocation();
             ServerSend.PlayerPosition(this);
+            isDead = true;
             StartCoroutine(Respawn());
+
+            if (_damageSourceId != this.id)
+            {
+                var _killer = Server.clients[_damageSourceId].player;
+                _killer.kills += 1;
+
+                ServerSend.PlayerKills(_killer, this);
+            }
+
+            this.deaths += 1;
+
         }
 
         ServerSend.PlayerHealth(this);
-    }
-
-    public void Reload()
-    {
-        if (!reloading)
-        {
-            reloading = true;
-            ServerSend.PlayerIsReloading(this);
-            StartCoroutine(ReloadWeapon());
-        }
     }
 
     private IEnumerator Respawn()
@@ -202,15 +239,9 @@ public class Player : MonoBehaviour
 
         health = maxHealth;
         controller.enabled = true;
+        isDead = false;
+        ammoCapacity = maxAmmoCapacity;
         ServerSend.PlayerRespawned(this);
-    }
-
-    private IEnumerator ReloadWeapon()
-    {
-        yield return new WaitForSeconds(reloadSpeed);
-
-        ammoCapacity = 50;
         ServerSend.PlayerAmmoCapacity(this, ammoCapacity);
-        reloading = false;
     }
 }

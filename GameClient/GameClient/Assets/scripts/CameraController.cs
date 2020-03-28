@@ -15,21 +15,23 @@ public class CameraController : MonoBehaviour
     {
         verticalRotation = transform.localEulerAngles.x;
         horizontalRotation = player.transform.eulerAngles.y;
+
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
     }
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (Input.GetKeyUp(KeyCode.Escape))
         {
             ToggleCursorMode();
+            UIManager.PauseMenu();
         }
 
         if (Cursor.lockState == CursorLockMode.Locked)
         {
             Look();
         }
-
-        Debug.DrawRay(transform.position, transform.forward * 2, Color.red);
     }
 
     private void Look()
@@ -48,15 +50,15 @@ public class CameraController : MonoBehaviour
 
     private void ToggleCursorMode()
     {
-        Cursor.visible = !Cursor.visible;
-
         if (Cursor.lockState == CursorLockMode.None)
         {
             Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
         }
         else
         {
             Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
         }
     }
 }
