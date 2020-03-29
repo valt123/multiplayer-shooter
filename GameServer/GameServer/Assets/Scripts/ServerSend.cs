@@ -142,12 +142,13 @@ public class ServerSend
         }
     }
 
-    public static void PlayerShootReceived(Player _player, Vector3 _target)
+    public static void PlayerShootReceived(Player _player, Vector3 _target, bool _didHitPlayer)
     {
         using (Packet _packet = new Packet((int)ServerPackets.playerShootReceived))
         {
             _packet.Write(_player.id);
             _packet.Write(_target);
+            _packet.Write(_didHitPlayer);
 
             SendTCPDataToAll(_packet);
         }

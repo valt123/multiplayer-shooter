@@ -18,6 +18,7 @@ public class UIManager : MonoBehaviour
     public GameObject hud;
     public Text ammoCapacity;
     public Text healthText;
+    public Image hitMarker;
     #endregion
 
     #region Scoreboard variables
@@ -33,8 +34,12 @@ public class UIManager : MonoBehaviour
     public List<GameObject> killFeedItemList = new List<GameObject>();
     #endregion
 
-    #region paueseMenu
+    #region Pause menu
     public GameObject pauseMenu;
+
+    public GameObject optionsMenu;
+    public Slider volume;
+    public Slider sensitivity;
     #endregion
 
     public GameObject deathScreen;
@@ -45,11 +50,14 @@ public class UIManager : MonoBehaviour
         {
             instance = this;
         }
+
         else if (instance != this)
         {
             Debug.Log("Instance already exists");
             Destroy(this);
         }
+
+        hitMarker.canvasRenderer.SetAlpha(0);
     }
 
     #region Hud stuff
@@ -66,6 +74,12 @@ public class UIManager : MonoBehaviour
     public static void DeathScreen(bool _isDead)
     {
         instance.deathScreen.SetActive(_isDead);
+    }
+
+    public static void HitMark()
+    {
+        instance.hitMarker.canvasRenderer.SetAlpha(1);
+        FadeOut(instance.hitMarker, 0.2f);
     }
     #endregion
 
@@ -84,6 +98,7 @@ public class UIManager : MonoBehaviour
             startMenu.SetActive(false);
             hud.SetActive(true);
         }
+
         catch (Exception _ex)
         {
             Debug.Log($"There was an error connecting to the server: {_ex}");
@@ -118,6 +133,11 @@ public class UIManager : MonoBehaviour
     }
 
     public void Options()
+    {
+
+    }
+
+    public void OptionsMenu()
     {
 
     }
@@ -192,4 +212,14 @@ public class UIManager : MonoBehaviour
         Destroy(_killFeedItem.gameObject);
     }
     #endregion
+
+    public static void FadeIn(Image _image, float _duration)
+    {
+        _image.CrossFadeAlpha(1, _duration, false);
+    }
+
+    public static void FadeOut(Image _image, float _duration)
+    {
+        _image.CrossFadeAlpha(0, _duration, false);
+    }
 }

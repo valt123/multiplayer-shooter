@@ -83,6 +83,7 @@ public class Player : MonoBehaviour
         
         Move(_inputDirection);
     }
+
     #region Movement
     private void Move(Vector2 _inputDirection)
     {
@@ -160,14 +161,19 @@ public class Player : MonoBehaviour
             if (_hit.collider.CompareTag("Player"))
             {
                 _hit.collider.GetComponent<Player>().TakeDamage(damage, this.id);
+                ServerSend.PlayerShootReceived(this, _hit.point, true);
+            }
+            else
+            {
+                ServerSend.PlayerShootReceived(this, _hit.point, false);
             }
 
-            ServerSend.PlayerShootReceived(this, _hit.point);
+            
         }
         else
         {
             Vector3 _target = shootOrigin.position + (_shootDirection.normalized * 50f);
-            ServerSend.PlayerShootReceived(this, _target);
+            ServerSend.PlayerShootReceived(this, _target, false);
         }
 
         ammoCapacity -= 1;

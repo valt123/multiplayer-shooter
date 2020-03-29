@@ -64,7 +64,7 @@ public class PlayerManager : MonoBehaviour
         }
         nameText.SetActive(false);
 
-        if (id == Client.instance.myId)
+        if (IsLocalPlayer())
         {
             UIManager.DeathScreen(true);
         }
@@ -80,7 +80,7 @@ public class PlayerManager : MonoBehaviour
         SetHealth(maxHealth);
         nameText.SetActive(true);
 
-        if (id == Client.instance.myId)
+        if (IsLocalPlayer())
         {
             UIManager.DeathScreen(false);
         }
@@ -118,9 +118,9 @@ public class PlayerManager : MonoBehaviour
 
     public void NameText()
     {
-        TextMesh _text = nameText.GetComponent<TextMesh>();
-        if (Client.instance.myId != id)
+        if (!IsLocalPlayer())
         {
+            TextMesh _text = nameText.GetComponent<TextMesh>();
             _text.text = username;
         }
     }
@@ -145,7 +145,7 @@ public class PlayerManager : MonoBehaviour
         ammoCapacity = _ammoCapacity;
         magazine.GetComponent<MeshRenderer>().enabled = true;
 
-        if (id == Client.instance.myId)
+        if (IsLocalPlayer())
         {
             UIManager.AmmoCapacity(ammoCapacity.ToString());
         }

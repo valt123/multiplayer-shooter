@@ -74,6 +74,12 @@ public class ClientHandle : MonoBehaviour
     {
         int _id = _packet.ReadInt();
         Vector3 _target = _packet.ReadVector3();
+        bool _didHitPlayer = _packet.ReadBool();
+
+        if (_didHitPlayer)
+        {
+            UIManager.HitMark();
+        }
 
         GameManager.players[_id].ShootReceived(_target);
     }
