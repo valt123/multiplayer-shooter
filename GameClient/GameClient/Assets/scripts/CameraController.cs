@@ -5,7 +5,7 @@ using UnityEngine;
 public class CameraController : MonoBehaviour
 {
     public PlayerManager player;
-    public float sensitivity = 100f;
+    public float sensitivity;
     public float clampAngle = 85f;
 
     private float verticalRotation;
@@ -22,6 +22,8 @@ public class CameraController : MonoBehaviour
 
     private void Update()
     {
+        sensitivity = PlayerPrefs.GetFloat("Sensitivity", 100f);
+
         if (Input.GetKeyUp(KeyCode.Escape))
         {
             ToggleCursorMode();

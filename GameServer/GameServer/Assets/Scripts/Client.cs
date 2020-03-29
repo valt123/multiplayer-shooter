@@ -241,7 +241,10 @@ public class Client
             "Dixie Normus",
             "Ben Dover",
             "Nuub",
-            "Woody"
+            "Woody",
+            "Gabe Itch",
+            "Chungus",
+            "Mike Litoris"
         };
         return randomNames[UnityEngine.Random.Range(0,randomNames.Length)];
     }

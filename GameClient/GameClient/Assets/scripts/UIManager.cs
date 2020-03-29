@@ -58,6 +58,9 @@ public class UIManager : MonoBehaviour
         }
 
         hitMarker.canvasRenderer.SetAlpha(0);
+
+        usernameField.text = PlayerPrefs.GetString("Username");
+        ipAddress.text = PlayerPrefs.GetString("IPaddress");
     }
 
     #region Hud stuff
@@ -86,7 +89,9 @@ public class UIManager : MonoBehaviour
     #region Start menu
     public void ConnectToServer()
     {
-        if (ipAddress.text == "localhost" || ipAddress.text == "")
+        hitMarker.canvasRenderer.SetAlpha(0);
+
+        if (ipAddress.text == "")
         {
             ipAddress.text = "127.0.0.1";
         }
@@ -97,11 +102,14 @@ public class UIManager : MonoBehaviour
 
             startMenu.SetActive(false);
             hud.SetActive(true);
+
+            PlayerPrefs.SetString("Username", usernameField.text);
+            PlayerPrefs.SetString("IPaddress", ipAddress.text);
         }
 
-        catch (Exception _ex)
+        catch
         {
-            Debug.Log($"There was an error connecting to the server: {_ex}");
+            Debug.Log($"There was an error connecting to the server");
         }
 
     }
@@ -111,6 +119,12 @@ public class UIManager : MonoBehaviour
     public static void PauseMenu()
     {
         instance.pauseMenu.SetActive(Cursor.lockState == CursorLockMode.None);
+
+        if (Cursor.lockState == CursorLockMode.Locked && instance.optionsMenu.activeSelf)
+        {
+            instance.CloseOptions();
+        }
+        
     }
 
     public void DisconnectFromServer()
@@ -134,12 +148,30 @@ public class UIManager : MonoBehaviour
 
     public void Options()
     {
+        instance.optionsMenu.SetActive(true);
+        instance.sensitivity.value = PlayerPrefs.GetFloat("Sensitivity", 100f);
+        instance.volume.value = PlayerPrefs.GetFloat("Volume", .5f);
 
+        instance.optionsMenu.transform.Find("VolumeValue").GetComponent<Text>().text = instance.volume.value.ToString("F2");
+        instance.optionsMenu.transform.Find("SensitivityValue").GetComponent<Text>().text = instance.sensitivity.value.ToString("F0");
     }
 
-    public void OptionsMenu()
+    public void SaveSensitivityOption()
     {
+        PlayerPrefs.SetFloat("Sensitivity", instance.sensitivity.value);
+        instance.optionsMenu.transform.Find("SensitivityValue").GetComponent<Text>().text = instance.sensitivity.value.ToString("F0");
+    }
 
+    public void SaveVolumeOption()
+    {
+        PlayerPrefs.SetFloat("Volume", instance.volume.value);
+        instance.optionsMenu.transform.Find("VolumeValue").GetComponent<Text>().text = instance.volume.value.ToString("F2");
+        Debug.Log(instance.volume.value);
+    }
+
+    public void CloseOptions()
+    {
+        instance.optionsMenu.SetActive(false);
     }
     #endregion
 
@@ -212,6 +244,7 @@ public class UIManager : MonoBehaviour
         Destroy(_killFeedItem.gameObject);
     }
     #endregion
+
 
     public static void FadeIn(Image _image, float _duration)
     {
