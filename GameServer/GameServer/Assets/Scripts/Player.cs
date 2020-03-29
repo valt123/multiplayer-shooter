@@ -218,6 +218,7 @@ public class Player : MonoBehaviour
             isDead = true;
             StartCoroutine(Respawn());
 
+            this.deaths += 1;
             if (_damageSourceId != this.id)
             {
                 var _killer = Server.clients[_damageSourceId].player;
@@ -225,9 +226,6 @@ public class Player : MonoBehaviour
 
                 ServerSend.PlayerKills(_killer, this);
             }
-
-            this.deaths += 1;
-
         }
 
         ServerSend.PlayerHealth(this);

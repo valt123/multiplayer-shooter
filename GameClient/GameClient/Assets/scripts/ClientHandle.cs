@@ -23,8 +23,10 @@ public class ClientHandle : MonoBehaviour
         string _username = _packet.ReadString();
         Vector3 _position = _packet.ReadVector3();
         Quaternion _rotation = _packet.ReadQuaternion();
+        int _playerKills = _packet.ReadInt();
+        int _playerDeaths = _packet.ReadInt();
 
-        GameManager.instance.SpawnPlayer(_id, _username, _position, _rotation);
+        GameManager.instance.SpawnPlayer(_id, _username, _position, _rotation, _playerKills, _playerDeaths);
     }
 
     public static void PlayerPosition(Packet _packet)
@@ -94,15 +96,22 @@ public class ClientHandle : MonoBehaviour
     public static void PlayerKills(Packet _packet)
     {
         var _killerId = _packet.ReadInt();
+        var _kills = _packet.ReadInt();
+
         var _killedId = _packet.ReadInt();
+        var _deaths = _packet.ReadInt();
 
         var _killer = GameManager.players[_killerId];
         var _killed = GameManager.players[_killedId];
 
-        _killer.kills += 1;
-        _killed.deaths += 1;
+        _killer.kills = _kills;
+        _killed.deaths = _deaths;
 
-        UIManager.KillFeed(_killer.username, _killed.username);
+
+        var killer = _killer.IsLocalPlayer() ? $"<color=orange>{_killer.username}</color>" : $"<color=red>{_killer.username}</color>";
+        var killed = _killed.IsLocalPlayer() ? $"<color=orange>{_killed.username}</color>" : $"<color=red>{_killed.username}</color>";
+
+        UIManager.KillFeed(killer, killed);
 
         Debug.Log($"{_killer.username} killed {_killed.username} ");
     }

@@ -28,12 +28,15 @@ public class UIManager : MonoBehaviour
     #endregion
 
     #region Killfeed variables
-    public GameObject killFeed;
     public Transform killFeedTemplate;
     public Transform killFeedContainer;
+    public List<GameObject> killFeedItemList = new List<GameObject>();
     #endregion
 
+    #region paueseMenu
     public GameObject pauseMenu;
+    #endregion
+
     public GameObject deathScreen;
 
     private void Awake()
@@ -141,7 +144,7 @@ public class UIManager : MonoBehaviour
                 var kills = _player.kills.ToString();
                 var deaths = _player.deaths.ToString();
 
-                entryTransform.Find("name").GetComponent<Text>().text = name;
+                entryTransform.Find("name").GetComponent<Text>().text = _player.IsLocalPlayer() ? $"<color=orange>{name}</color>" : $"<color=red> {name} </color>";
                 entryTransform.Find("kills").GetComponent<Text>().text = kills;
                 entryTransform.Find("deaths").GetComponent<Text>().text = deaths;
 
@@ -163,20 +166,30 @@ public class UIManager : MonoBehaviour
     #region Killfeed
     public static void KillFeed(string _killer, string _killed)
     {
-        instance.killFeed.SetActive(true);
-
         float templateHeight = 35f;
+        
+        Transform killFeedItem = Instantiate(instance.killFeedTemplate, instance.killFeedContainer);
+        RectTransform killFeedItemRect = killFeedItem.GetComponent<RectTransform>();
+        killFeedItemRect.anchoredPosition = new Vector2(0, -templateHeight);
 
-        var i = 0;
+        killFeedItem.Find("Killer").GetComponent<Text>().text = _killer;
+        killFeedItem.Find("Killed").GetComponent<Text>().text = _killed;
 
-        Transform entryTransform = Instantiate(instance.killFeedTemplate, instance.killFeedContainer);
-        RectTransform entryRectTransform = entryTransform.GetComponent<RectTransform>();
-        entryRectTransform.anchoredPosition = new Vector2(0, -templateHeight * i);
+        foreach(var item in instance.killFeedItemList)
+        {
+            item.GetComponent<RectTransform>().position += new Vector3(0, -templateHeight, 0);
+        }
 
-        entryTransform.Find("Killer").GetComponent<Text>().text = _killer;
-        entryTransform.Find("Killed").GetComponent<Text>().text = _killed;
+        instance.killFeedItemList.Add(killFeedItem.gameObject);
+        instance.StartCoroutine(instance.RemoveKillFeedItem(killFeedItem.gameObject));
+    }
 
-        entryTransform.gameObject.SetActive(true);
+    IEnumerator RemoveKillFeedItem(GameObject _killFeedItem)
+    {
+        yield return new WaitForSeconds(5f);
+
+        instance.killFeedItemList.Remove(_killFeedItem.gameObject);
+        Destroy(_killFeedItem.gameObject);
     }
     #endregion
 }

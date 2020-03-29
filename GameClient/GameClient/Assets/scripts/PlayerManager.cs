@@ -24,11 +24,13 @@ public class PlayerManager : MonoBehaviour
     public GameObject nameText;
     public Transform cameraTransform;
 
-    public void Initialize(int _id, string _username)
+    public void Initialize(int _id, string _username, int _kills, int _deaths)
     {
         id = _id;
         username = _username;
         health = maxHealth;
+        kills = _kills;
+        deaths = _deaths;
         NameText();
         UIManager.Health(health, maxHealth);
         UIManager.AmmoCapacity(ammoCapacity.ToString());
@@ -147,5 +149,10 @@ public class PlayerManager : MonoBehaviour
         {
             UIManager.AmmoCapacity(ammoCapacity.ToString());
         }
+    }
+
+    public bool IsLocalPlayer()
+    {
+        return id == Client.instance.myId;
     }
 }

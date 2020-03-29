@@ -314,7 +314,7 @@ ScriptsOnlyBuild:
     className: Selectable
   - hash:
       serializedVersion: 2
-      Hash: 9cebf019eacb1e85dcf84af2ef419053
+      Hash: c2b999026b8c31ed203822d356b651fa
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: UIManager

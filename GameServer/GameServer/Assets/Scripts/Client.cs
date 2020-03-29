@@ -236,11 +236,12 @@ public class Client
             "Tuntematon sotilas",
             "Bobby McBobface",
             "Meatshield",
-            "Tuntematon potilas",
             "Dix out for harambe",
             "N-word",
-            "Hyypiö",
-            "Nuub"
+            "Dixie Normus",
+            "Ben Dover",
+            "Nuub",
+            "Woody"
         };
         return randomNames[UnityEngine.Random.Range(0,randomNames.Length)];
     }

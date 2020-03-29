@@ -81,6 +81,8 @@ public class ServerSend
             _packet.Write(_player.username);
             _packet.Write(_player.transform.position);
             _packet.Write(_player.transform.rotation);
+            _packet.Write(_player.kills);
+            _packet.Write(_player.deaths);
 
             SendTCPData(_toClient, _packet);
         }
@@ -177,7 +179,10 @@ public class ServerSend
         using (Packet _packet = new Packet((int)ServerPackets.playerKills))
         {
             _packet.Write(_killer.id);
+            _packet.Write(_killer.kills);
+
             _packet.Write(_killed.id);
+            _packet.Write(_killed.deaths);
 
             SendTCPDataToAll(_packet);
         }
