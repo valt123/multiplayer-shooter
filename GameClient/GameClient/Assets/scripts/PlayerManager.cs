@@ -32,13 +32,17 @@ public class PlayerManager : MonoBehaviour
         kills = _kills;
         deaths = _deaths;
         NameText();
-        UIManager.Health(health, maxHealth);
         UIManager.AmmoCapacity(ammoCapacity.ToString());
     }
 
     private void Update()
     {
         TurnNameTextTowardLocalPlayer();
+
+        if (IsLocalPlayer())
+        {
+            UIManager.DamageOverlay(health, maxHealth);
+        }
     }
 
     public void SetHealth(float _health)
@@ -48,11 +52,6 @@ public class PlayerManager : MonoBehaviour
         if (health <= 0f)
         {
             Die();
-        }
-
-        if (id == Client.instance.myId)
-        {
-            UIManager.Health(health, maxHealth);
         }
     }
 

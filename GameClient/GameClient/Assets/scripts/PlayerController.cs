@@ -23,6 +23,7 @@ public class PlayerController : MonoBehaviour
         {
             UIManager.Scoreboard(true);
         }
+
         else if (Input.GetKeyUp(KeyCode.Tab))
         {
             UIManager.Scoreboard(false);

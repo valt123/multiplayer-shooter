@@ -17,8 +17,8 @@ public class UIManager : MonoBehaviour
     #region Hud variables
     public GameObject hud;
     public Text ammoCapacity;
-    public Text healthText;
     public Image hitMarker;
+    public Image damageOverlay;
     #endregion
 
     #region Scoreboard variables
@@ -58,6 +58,7 @@ public class UIManager : MonoBehaviour
         }
 
         hitMarker.canvasRenderer.SetAlpha(0);
+        damageOverlay.canvasRenderer.SetAlpha(0);
 
         usernameField.text = PlayerPrefs.GetString("Username");
         ipAddress.text = PlayerPrefs.GetString("IPaddress");
@@ -67,11 +68,6 @@ public class UIManager : MonoBehaviour
     public static void AmmoCapacity(string _ammoCapacity)
     {
         instance.ammoCapacity.text = _ammoCapacity;
-    }
-
-    public static void Health(float _health, float _maxHealth)
-    {
-        instance.healthText.text = $"{_health}/{_maxHealth}";
     }
 
     public static void DeathScreen(bool _isDead)
@@ -84,12 +80,21 @@ public class UIManager : MonoBehaviour
         instance.hitMarker.canvasRenderer.SetAlpha(1);
         FadeOut(instance.hitMarker, 0.2f);
     }
+
+    public static void DamageOverlay(float _health, float _maxhealth)
+    {
+        var alpha = -(_health / _maxhealth) + 1;
+
+        instance.damageOverlay.CrossFadeAlpha(Math.Abs(alpha), 0.1f, false);
+    }
+
     #endregion
 
     #region Start menu
     public void ConnectToServer()
     {
         hitMarker.canvasRenderer.SetAlpha(0);
+        damageOverlay.canvasRenderer.SetAlpha(0);
 
         if (ipAddress.text == "")
         {
