@@ -76,7 +76,7 @@ public class ClientHandle : MonoBehaviour
         Vector3 _target = _packet.ReadVector3();
         bool _didHitPlayer = _packet.ReadBool();
 
-        if (_didHitPlayer)
+        if (_didHitPlayer && GameManager.players[_id].IsLocalPlayer())
         {
             UIManager.HitMark();
         }

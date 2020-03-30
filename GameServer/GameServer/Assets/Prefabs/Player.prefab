@@ -112,12 +112,22 @@ MonoBehaviour:
   controller: {fileID: 1791487088651200835}
   shootOrigin: {fileID: 7415770129633293726}
   facing: {fileID: 4333842743542050748}
+  health: 0
+  maxHealth: 100
+  kills: 0
+  deaths: 0
+  isRegen: 0
+  regenWaitTime: 2
+  regenSpeed: 0.05
   gravity: -9.81
   moveSpeed: 5
   sprintSpeed: 10
   jumpSpeed: 6
-  health: 0
-  maxHealth: 100
+  fireRate: 20
+  ammoCapacity: 50
+  maxAmmoCapacity: 50
+  damage: 15
+  reloadSpeed: 3
 --- !u!143 &1791487088651200835
 CharacterController:
   m_ObjectHideFlags: 0

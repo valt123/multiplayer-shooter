@@ -9,14 +9,24 @@ public class Player : MonoBehaviour
     public CharacterController controller;
     public Transform shootOrigin;
     public Transform facing;
+    public float health;
+    public float maxHealth = 100f;
+    public int kills = 0;
+    public int deaths = 0;
+
+    public bool isRegen = false;
+    public float regenWaitTime = 2f;
+    public float regenSpeed = 0.1f;
+
+    private IEnumerator coroutine;
 
     #region Movement variables
     public float gravity = -9.81f;
     public float moveSpeed = 5f;
     public float sprintSpeed = 10f;
     public float jumpSpeed = 10f;
-    public float health;
-    public float maxHealth = 100f;
+    private bool[] inputs;
+    private float yVelocity = 0;
     #endregion
 
     #region Weapon variables
@@ -31,12 +41,6 @@ public class Player : MonoBehaviour
     private bool isReloading = false;
     private bool isDead = false;
     #endregion
-
-    private bool[] inputs;
-    private float yVelocity = 0;
-
-    public int kills = 0;
-    public int deaths = 0;
 
     private void Start()
     {
@@ -62,6 +66,15 @@ public class Player : MonoBehaviour
             return;
         }
 
+        if (health > maxHealth)
+        {
+            health = maxHealth;
+        }
+        else if (health != maxHealth && !isRegen)
+        {
+            coroutine = Regen();
+            StartCoroutine(coroutine);
+        }
         Vector2 _inputDirection = Vector2.zero;
 
         if (inputs[0])
@@ -215,12 +228,19 @@ public class Player : MonoBehaviour
 
         health -= _damage;
 
+        if (isRegen)
+        {
+            StopCoroutine(coroutine);
+            isRegen = !isRegen;
+        }
+
         if (health <= 0f)
         {
             health = 0f;
             controller.enabled = false;
             transform.position = SpawnManager.SpawnLocation();
             ServerSend.PlayerPosition(this);
+            
             isDead = true;
             StartCoroutine(Respawn());
 
@@ -247,5 +267,19 @@ public class Player : MonoBehaviour
         ammoCapacity = maxAmmoCapacity;
         ServerSend.PlayerRespawned(this);
         ServerSend.PlayerAmmoCapacity(this, ammoCapacity);
+    }
+
+    IEnumerator Regen()
+    {
+        isRegen = true; //Set regenning to true
+        yield return new WaitForSeconds(regenWaitTime); //Wait for delay
+
+        while (health< maxHealth)
+        { //Start the regen cycle
+            health += 1; //Increase health by 1
+            ServerSend.PlayerHealth(this);
+            yield return new WaitForSeconds(regenSpeed); //Wait for regen speed
+        }
+        isRegen = false; //Set regenning to false
     }
 }
