@@ -10,6 +10,9 @@ public class PlayerManager : MonoBehaviour
     public float health;
     public float maxHealth;
 
+    public int kills;
+    public int deaths;
+
     public Transform tommyGun;
     public int ammoCapacity = 50;
     public GameObject magazine;
@@ -21,11 +24,13 @@ public class PlayerManager : MonoBehaviour
     public GameObject nameText;
     public Transform cameraTransform;
 
-    public void Initialize(int _id, string _username)
+    public void Initialize(int _id, string _username, int _kills, int _deaths)
     {
         id = _id;
         username = _username;
         health = maxHealth;
+        kills = _kills;
+        deaths = _deaths;
         NameText();
         UIManager.Health(health, maxHealth);
         UIManager.AmmoCapacity(ammoCapacity.ToString());
@@ -59,7 +64,7 @@ public class PlayerManager : MonoBehaviour
         }
         nameText.SetActive(false);
 
-        if (id == Client.instance.myId)
+        if (IsLocalPlayer())
         {
             UIManager.DeathScreen(true);
         }
@@ -75,7 +80,7 @@ public class PlayerManager : MonoBehaviour
         SetHealth(maxHealth);
         nameText.SetActive(true);
 
-        if (id == Client.instance.myId)
+        if (IsLocalPlayer())
         {
             UIManager.DeathScreen(false);
         }
@@ -113,9 +118,11 @@ public class PlayerManager : MonoBehaviour
 
     public void NameText()
     {
-        TextMesh _text = nameText.GetComponent<TextMesh>();
-
-        _text.text = username;
+        if (!IsLocalPlayer())
+        {
+            TextMesh _text = nameText.GetComponent<TextMesh>();
+            _text.text = username;
+        }
     }
 
     void TurnNameTextTowardLocalPlayer()
@@ -138,9 +145,14 @@ public class PlayerManager : MonoBehaviour
         ammoCapacity = _ammoCapacity;
         magazine.GetComponent<MeshRenderer>().enabled = true;
 
-        if (id == Client.instance.myId)
+        if (IsLocalPlayer())
         {
             UIManager.AmmoCapacity(ammoCapacity.ToString());
         }
+    }
+
+    public bool IsLocalPlayer()
+    {
+        return id == Client.instance.myId;
     }
 }

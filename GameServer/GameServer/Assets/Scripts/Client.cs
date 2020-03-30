@@ -228,4 +228,24 @@ public class Client
 
         ServerSend.PlayerDisconnected(id);
     }
+
+    public static string PickRandomName()
+    {
+        string[] randomNames = new string[]
+        {
+            "Tuntematon sotilas",
+            "Bobby McBobface",
+            "Meatshield",
+            "Dix out for harambe",
+            "N-word",
+            "Dixie Normus",
+            "Ben Dover",
+            "Nuub",
+            "Woody",
+            "Gabe Itch",
+            "Chungus",
+            "Mike Litoris"
+        };
+        return randomNames[UnityEngine.Random.Range(0,randomNames.Length)];
+    }
 }

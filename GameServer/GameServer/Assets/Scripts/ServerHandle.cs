@@ -9,6 +9,11 @@ public class ServerHandle
         int _clientIdCheck = _packet.ReadInt();
         string _username = _packet.ReadString();
 
+        if (_username == "")
+        {
+            _username = Client.PickRandomName();
+        }
+
         Debug.Log($"{Server.clients[_fromClient].tcp.socket.Client.RemoteEndPoint} connected successfully and is now player {_username} ({_fromClient})");
         if (_fromClient != _clientIdCheck)
         {
@@ -41,5 +46,11 @@ public class ServerHandle
     public static void PlayerReload(int _fromClient, Packet _packet)
     {
         Server.clients[_fromClient].player.Reload();
+    }
+
+    public static void PlayerSuicide(int _fromClient, Packet _packet)
+    {
+        var _player = Server.clients[_fromClient].player;
+        _player.TakeDamage(_player.maxHealth, _fromClient);
     }
 }

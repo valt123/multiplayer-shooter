@@ -29,8 +29,42 @@ public class SpawnManager : MonoBehaviour
 
     public static Vector3 SpawnLocation()
     {
-        int spawnPoint = Random.Range(0, spawnPoints.Length);
+        var spawnPoint = instance.FindSafeSpawn();
 
-        return spawnPoints[spawnPoint].transform.position;
+        return spawnPoint;
+    }
+
+    Vector3 FindSafeSpawn()
+    {
+        List<Vector3> safeSpawns = new List<Vector3>();
+
+        foreach(var spawnPoint in spawnPoints)
+        {
+            bool isPlayerNearSpawn = false;
+
+            Collider[] hitColliders = Physics.OverlapSphere(spawnPoint.transform.position, 20f);
+
+            foreach (var collider in hitColliders)
+            {
+                if (collider.CompareTag("Player"))
+                {
+                    isPlayerNearSpawn = true;
+                }
+            }
+
+            if (!isPlayerNearSpawn)
+            {
+                safeSpawns.Add(spawnPoint.transform.position);
+            }
+        }
+
+        if (safeSpawns.Count == 0)
+        {
+            return spawnPoints[Random.Range(0, spawnPoints.Length)].transform.position;
+        }
+        else
+        {
+           return safeSpawns.ToArray()[Random.Range(0, safeSpawns.Count)];
+        }
     }
 }

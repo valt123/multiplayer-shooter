@@ -5183,7 +5183,7 @@ TextMesh:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3994541875029481486}
-  m_Text: Player
+  m_Text: 
   m_OffsetZ: 0
   m_CharacterSize: 0.5
   m_LineSpacing: 1
@@ -5441,6 +5441,8 @@ MonoBehaviour:
   username: 
   health: 100
   maxHealth: 100
+  kills: 0
+  deaths: 0
   tommyGun: {fileID: 1154849267762146190}
   ammoCapacity: 50
   magazine: {fileID: 7476130922107904114}

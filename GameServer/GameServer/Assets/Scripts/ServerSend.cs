@@ -81,6 +81,8 @@ public class ServerSend
             _packet.Write(_player.username);
             _packet.Write(_player.transform.position);
             _packet.Write(_player.transform.rotation);
+            _packet.Write(_player.kills);
+            _packet.Write(_player.deaths);
 
             SendTCPData(_toClient, _packet);
         }
@@ -140,12 +142,13 @@ public class ServerSend
         }
     }
 
-    public static void PlayerShootReceived(Player _player, Vector3 _target)
+    public static void PlayerShootReceived(Player _player, Vector3 _target, bool _didHitPlayer)
     {
         using (Packet _packet = new Packet((int)ServerPackets.playerShootReceived))
         {
             _packet.Write(_player.id);
             _packet.Write(_target);
+            _packet.Write(_didHitPlayer);
 
             SendTCPDataToAll(_packet);
         }
@@ -167,6 +170,20 @@ public class ServerSend
         {
             _packet.Write(_player.id);
             _packet.Write(_ammoCapacity);
+
+            SendTCPDataToAll(_packet);
+        }
+    }
+
+    public static void PlayerKills(Player _killer, Player _killed)
+    {
+        using (Packet _packet = new Packet((int)ServerPackets.playerKills))
+        {
+            _packet.Write(_killer.id);
+            _packet.Write(_killer.kills);
+
+            _packet.Write(_killed.id);
+            _packet.Write(_killed.deaths);
 
             SendTCPDataToAll(_packet);
         }

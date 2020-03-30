@@ -13,10 +13,8 @@ ScriptsOnlyBuild:
     UnityEditor.Graphs.dll:
     - UnityEditor.Graphs.AnimationBlendTree.Graph
     - UnityEditor.Graphs.AnimationBlendTree.GraphGUI
-    - UnityEditor.Graphs.AnimationStateMachine.AnyStateNode
     - UnityEditor.Graphs.AnimationStateMachine.Graph
     - UnityEditor.Graphs.AnimationStateMachine.GraphGUI
-    - UnityEditor.Graphs.AnimationStateMachine.StateNode
     - UnityEditor.Graphs.AnimatorControllerTool
     UnityEditor.TestRunner.dll:
     - UnityEditor.TestTools.TestRunner.Api.CallbacksHolder
@@ -30,6 +28,7 @@ ScriptsOnlyBuild:
     - UnityEngine.UI.GraphicRaycaster
     - UnityEngine.UI.Image
     - UnityEngine.UI.InputField
+    - UnityEngine.UI.Slider
     - UnityEngine.UI.Text
   sceneClasses:
     Assets/Scenes/Main.unity:
@@ -70,35 +69,37 @@ ScriptsOnlyBuild:
     - Class: 108
       Script: {instanceID: 0}
     - Class: 114
-      Script: {instanceID: 11560}
+      Script: {instanceID: 11558}
     - Class: 114
-      Script: {instanceID: 11696}
+      Script: {instanceID: 11694}
     - Class: 114
-      Script: {instanceID: 11734}
+      Script: {instanceID: 11732}
     - Class: 114
-      Script: {instanceID: 11760}
+      Script: {instanceID: 11758}
     - Class: 114
-      Script: {instanceID: 11838}
+      Script: {instanceID: 11836}
     - Class: 114
-      Script: {instanceID: 11870}
+      Script: {instanceID: 11868}
     - Class: 114
-      Script: {instanceID: 12090}
+      Script: {instanceID: 12088}
     - Class: 114
-      Script: {instanceID: 12106}
+      Script: {instanceID: 12104}
     - Class: 114
-      Script: {instanceID: 12234}
+      Script: {instanceID: 12232}
     - Class: 114
-      Script: {instanceID: 12366}
+      Script: {instanceID: 12364}
     - Class: 114
-      Script: {instanceID: 12416}
+      Script: {instanceID: 12414}
     - Class: 114
-      Script: {instanceID: 12576}
+      Script: {instanceID: 12574}
     - Class: 114
-      Script: {instanceID: 12834}
+      Script: {instanceID: 12832}
     - Class: 114
-      Script: {instanceID: 13082}
+      Script: {instanceID: 13080}
     - Class: 114
-      Script: {instanceID: 13136}
+      Script: {instanceID: 13134}
+    - Class: 114
+      Script: {instanceID: 13158}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -316,7 +317,7 @@ ScriptsOnlyBuild:
     className: Selectable
   - hash:
       serializedVersion: 2
-      Hash: 7d5b9b0d9ffadf7312dd9734576b523e
+      Hash: 7760c301c13520d6b2dcbb1580425821
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: UIManager
@@ -340,7 +341,7 @@ ScriptsOnlyBuild:
     className: RemoteTestResultSender
   - hash:
       serializedVersion: 2
-      Hash: 7e8f926f04f6c68c6cda325afa05d9a7
+      Hash: 91a96b2ad5db462017967bce81b1baac
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: PlayerManager
