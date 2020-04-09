@@ -13,7 +13,7 @@ public class PlayerController : MonoBehaviour
             ClientSend.PlayerShoot(camTransform.forward);
         }
 
-        if (Input.GetKeyDown(KeyCode.R) && GetComponent<PlayerManager>().ammoCapacity < 50)
+        if (Input.GetKeyDown(KeyCode.R) && GetComponent<PlayerManager>().ammoCapacity < GetComponent<PlayerManager>().maxAmmoCapacity)
         {
             ClientSend.PlayerReload();
             UIManager.AmmoCapacity("Reloading");

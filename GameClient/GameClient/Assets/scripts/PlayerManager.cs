@@ -15,14 +15,24 @@ public class PlayerManager : MonoBehaviour
 
     public Transform tommyGun;
     public int ammoCapacity = 50;
+    public int maxAmmoCapacity = 50;
     public GameObject magazine;
     public Animator boltAnimator;
+
+    public AudioClip[] gunShotSounds;
+    public AudioClip[] playerHitSound;
+    public AudioClip[] movementSounds;
+    public AudioSource shootOriginAudioSource;
+    public AudioSource playerAudioSource;
 
     public MeshRenderer[] model;
 
     public GameObject shootOrigin;
     public GameObject nameText;
     public Transform cameraTransform;
+    private Vector3 lastPosition;
+    public float speed;
+    public bool isGrounded;
 
     public void Initialize(int _id, string _username, int _kills, int _deaths)
     {
@@ -31,18 +41,49 @@ public class PlayerManager : MonoBehaviour
         health = maxHealth;
         kills = _kills;
         deaths = _deaths;
-        NameText();
+
+        playerAudioSource.clip = movementSounds[0];
+
+        if (!IsLocalPlayer())
+        {
+            TextMesh _text = nameText.GetComponent<TextMesh>();
+            _text.text = username;
+        }
+
         UIManager.AmmoCapacity(ammoCapacity.ToString());
     }
 
     private void Update()
     {
-        TurnNameTextTowardLocalPlayer();
-
         if (IsLocalPlayer())
         {
             UIManager.DamageOverlay(health, maxHealth);
         }
+    }
+
+    void FixedUpdate()
+    {
+        speed = (transform.position - lastPosition).magnitude;
+        lastPosition = transform.position;
+        Debug.Log(speed);
+
+        if (speed > 0f && !playerAudioSource.isPlaying && isGrounded )
+        {
+            playerAudioSource.volume = PlayerPrefs.GetFloat("Volume", 0.5f);
+
+            if (speed > 0.1f)
+            {
+                playerAudioSource.pitch = Random.Range(1f, 1.1f);
+            }
+            else
+            {
+                playerAudioSource.pitch = Random.Range(0.7f, 0.9f);
+            }
+            
+            playerAudioSource.Play();
+        }
+
+        TurnNameTextTowardLocalPlayer();
     }
 
     public void SetHealth(float _health)
@@ -85,13 +126,22 @@ public class PlayerManager : MonoBehaviour
         }
     }
 
-    public void ShootReceived(Vector3 _endPosition)
+    public void ShootReceived(Vector3 _endPosition, bool _didHitPlayer)
     {
         tommyGun.LookAt(_endPosition);
 
         ShotTracer(_endPosition);
         shootOrigin.GetComponent<ParticleSystem>().Play();
+
+        shootOriginAudioSource.pitch = Random.Range(1, 1.1f);
+        shootOriginAudioSource.PlayOneShot(gunShotSounds[Random.Range(0, gunShotSounds.Length)], PlayerPrefs.GetFloat("Volume", 0.5f));
+
         boltAnimator.Play("Bolt_firing");
+
+        if (_didHitPlayer)
+        {
+            AudioSource.PlayClipAtPoint(playerHitSound[Random.Range(0, gunShotSounds.Length)], _endPosition, PlayerPrefs.GetFloat("Volume", 0.5f));
+        }
     }
 
     public void ShotTracer(Vector3 _endPosition)
@@ -115,15 +165,6 @@ public class PlayerManager : MonoBehaviour
         Destroy(line, 0.05f);
     }
 
-    public void NameText()
-    {
-        if (!IsLocalPlayer())
-        {
-            TextMesh _text = nameText.GetComponent<TextMesh>();
-            _text.text = username;
-        }
-    }
-
     void TurnNameTextTowardLocalPlayer()
     {
         nameText.transform.LookAt(2 * nameText.transform.position - GameManager.players[Client.instance.myId].transform.position);
@@ -139,9 +180,10 @@ public class PlayerManager : MonoBehaviour
         Destroy(_magazine, 20f);
     }
 
-    public void AmmoCapacity(int _ammoCapacity)
+    public void AmmoCapacity(int _ammoCapacity, int _maxAmmoCapacity)
     {
         ammoCapacity = _ammoCapacity;
+        maxAmmoCapacity = _maxAmmoCapacity;
         magazine.GetComponent<MeshRenderer>().enabled = true;
 
         if (IsLocalPlayer())

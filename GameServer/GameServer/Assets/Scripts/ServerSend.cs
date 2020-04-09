@@ -94,6 +94,7 @@ public class ServerSend
         {
             _packet.Write(_player.id);
             _packet.Write(_player.transform.position);
+            _packet.Write(_player.controller.isGrounded);
 
             SendUDPDataToAll(_packet);
         }
@@ -164,12 +165,13 @@ public class ServerSend
         }
     }
 
-    public static void PlayerAmmoCapacity(Player _player, int _ammoCapacity)
+    public static void PlayerAmmoCapacity(Player _player, int _ammoCapacity, int _maxAmmoCapacity)
     {
         using (Packet _packet = new Packet((int)ServerPackets.playerAmmoCapacity))
         {
             _packet.Write(_player.id);
             _packet.Write(_ammoCapacity);
+            _packet.Write(_maxAmmoCapacity);
 
             SendTCPDataToAll(_packet);
         }
