@@ -33,8 +33,10 @@ public class ClientHandle : MonoBehaviour
     {
         int _id = _packet.ReadInt();
         Vector3 _position = _packet.ReadVector3();
+        bool _isGrounded = _packet.ReadBool();
 
         GameManager.players[_id].transform.position = _position;
+        GameManager.players[_id].isGrounded = _isGrounded;
     }
 
     public static void PlayerRotation(Packet _packet)
@@ -81,7 +83,7 @@ public class ClientHandle : MonoBehaviour
             UIManager.HitMark();
         }
 
-        GameManager.players[_id].ShootReceived(_target);
+        GameManager.players[_id].ShootReceived(_target, _didHitPlayer);
     }
 
     public static void PlayerIsReloading(Packet _packet)
@@ -95,8 +97,9 @@ public class ClientHandle : MonoBehaviour
     {
         int _id = _packet.ReadInt();
         int _ammoCapacity = _packet.ReadInt();
+        int _maxAmmoCapacity = _packet.ReadInt();
 
-        GameManager.players[_id].AmmoCapacity(_ammoCapacity);
+        GameManager.players[_id].AmmoCapacity(_ammoCapacity, _maxAmmoCapacity);
     }
 
     public static void PlayerKills(Packet _packet)
@@ -112,7 +115,6 @@ public class ClientHandle : MonoBehaviour
 
         _killer.kills = _kills;
         _killed.deaths = _deaths;
-
 
         var killer = _killer.IsLocalPlayer() ? $"<color=orange>{_killer.username}</color>" : $"<color=red>{_killer.username}</color>";
         var killed = _killed.IsLocalPlayer() ? $"<color=orange>{_killed.username}</color>" : $"<color=red>{_killed.username}</color>";

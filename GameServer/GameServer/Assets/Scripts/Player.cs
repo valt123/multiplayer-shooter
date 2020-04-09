@@ -112,7 +112,7 @@ public class Player : MonoBehaviour
 
         Vector3 _moveDirection = transform.right * _inputDirection.x + transform.forward * _inputDirection.y;
 
-        float _moveSpeed = inputs[5] ? sprintSpeed : moveSpeed;
+        float _moveSpeed = inputs[5] && inputs[0] ? sprintSpeed : moveSpeed;
 
          _moveDirection = Vector3.ClampMagnitude(_moveDirection, 1f) * _moveSpeed;
 
@@ -180,8 +180,6 @@ public class Player : MonoBehaviour
             {
                 ServerSend.PlayerShootReceived(this, _hit.point, false);
             }
-
-            
         }
         else
         {
@@ -190,7 +188,7 @@ public class Player : MonoBehaviour
         }
 
         ammoCapacity -= 1;
-        ServerSend.PlayerAmmoCapacity(this, ammoCapacity);
+        ServerSend.PlayerAmmoCapacity(this, ammoCapacity, maxAmmoCapacity);
         lastFired = Time.time;
     }
 
@@ -214,7 +212,7 @@ public class Player : MonoBehaviour
         yield return new WaitForSeconds(reloadSpeed);
 
         ammoCapacity = maxAmmoCapacity;
-        ServerSend.PlayerAmmoCapacity(this, ammoCapacity);
+        ServerSend.PlayerAmmoCapacity(this, ammoCapacity, maxAmmoCapacity);
         isReloading = false;
     }
     #endregion
@@ -266,7 +264,7 @@ public class Player : MonoBehaviour
         isDead = false;
         ammoCapacity = maxAmmoCapacity;
         ServerSend.PlayerRespawned(this);
-        ServerSend.PlayerAmmoCapacity(this, ammoCapacity);
+        ServerSend.PlayerAmmoCapacity(this, ammoCapacity, maxAmmoCapacity);
     }
 
     IEnumerator Regen()

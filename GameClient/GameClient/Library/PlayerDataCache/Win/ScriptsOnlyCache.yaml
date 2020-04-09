@@ -56,6 +56,10 @@ ScriptsOnlyBuild:
       Script: {instanceID: 0}
     - Class: 81
       Script: {instanceID: 0}
+    - Class: 82
+      Script: {instanceID: 0}
+    - Class: 83
+      Script: {instanceID: 0}
     - Class: 89
       Script: {instanceID: 0}
     - Class: 91
@@ -69,37 +73,37 @@ ScriptsOnlyBuild:
     - Class: 108
       Script: {instanceID: 0}
     - Class: 114
-      Script: {instanceID: 11560}
+      Script: {instanceID: 11556}
     - Class: 114
-      Script: {instanceID: 11696}
+      Script: {instanceID: 11692}
     - Class: 114
-      Script: {instanceID: 11734}
+      Script: {instanceID: 11730}
     - Class: 114
-      Script: {instanceID: 11760}
+      Script: {instanceID: 11756}
     - Class: 114
-      Script: {instanceID: 11838}
+      Script: {instanceID: 11834}
     - Class: 114
-      Script: {instanceID: 11870}
+      Script: {instanceID: 11866}
     - Class: 114
-      Script: {instanceID: 12090}
+      Script: {instanceID: 12086}
     - Class: 114
-      Script: {instanceID: 12106}
+      Script: {instanceID: 12102}
     - Class: 114
-      Script: {instanceID: 12234}
+      Script: {instanceID: 12230}
     - Class: 114
-      Script: {instanceID: 12366}
+      Script: {instanceID: 12362}
     - Class: 114
-      Script: {instanceID: 12416}
+      Script: {instanceID: 12412}
     - Class: 114
-      Script: {instanceID: 12576}
+      Script: {instanceID: 12572}
     - Class: 114
-      Script: {instanceID: 12834}
+      Script: {instanceID: 12830}
     - Class: 114
-      Script: {instanceID: 13082}
+      Script: {instanceID: 13078}
     - Class: 114
-      Script: {instanceID: 13136}
+      Script: {instanceID: 13132}
     - Class: 114
-      Script: {instanceID: 13160}
+      Script: {instanceID: 13156}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -317,7 +321,7 @@ ScriptsOnlyBuild:
     className: Selectable
   - hash:
       serializedVersion: 2
-      Hash: 521e787ec5bcc7055daf3d005423351c
+      Hash: 93f47f9d0655411fc2776859c14b99b9
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: UIManager
@@ -341,7 +345,7 @@ ScriptsOnlyBuild:
     className: RemoteTestResultSender
   - hash:
       serializedVersion: 2
-      Hash: 91a96b2ad5db462017967bce81b1baac
+      Hash: 6751b3bae008182423c27f879fe3adf5
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: PlayerManager
