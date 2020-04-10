@@ -120,8 +120,8 @@ MonoBehaviour:
   regenWaitTime: 2.5
   regenSpeed: 0.06
   gravity: -9.81
-  moveSpeed: 5
-  sprintSpeed: 10
+  moveSpeed: 4
+  sprintSpeed: 9
   jumpSpeed: 5
   fireRate: 20
   ammoCapacity: 50
