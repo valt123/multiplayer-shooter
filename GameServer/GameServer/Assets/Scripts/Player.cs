@@ -13,6 +13,7 @@ public class Player : MonoBehaviour
     public float maxHealth = 100f;
     public int kills = 0;
     public int deaths = 0;
+    private Vector3 aerialDirection;
 
     public bool isRegen = false;
     public float regenWaitTime = 2f;
@@ -106,15 +107,26 @@ public class Player : MonoBehaviour
             if (inputs[4])
             {
                 yVelocity = jumpSpeed;
+                aerialDirection = transform.right * _inputDirection.x + transform.forward * _inputDirection.y;
+
+                float _moveSpeed = inputs[5] && inputs[0] ? sprintSpeed : moveSpeed;
+                aerialDirection = Vector3.ClampMagnitude(aerialDirection, 1f) * _moveSpeed;
             }
         }
         yVelocity += gravity;
 
-        Vector3 _moveDirection = transform.right * _inputDirection.x + transform.forward * _inputDirection.y;
+        Vector3 _moveDirection;
+        if (controller.isGrounded)
+        {
+            _moveDirection = transform.right * _inputDirection.x + transform.forward * _inputDirection.y;
 
-        float _moveSpeed = inputs[5] && inputs[0] ? sprintSpeed : moveSpeed;
-
-         _moveDirection = Vector3.ClampMagnitude(_moveDirection, 1f) * _moveSpeed;
+            float _moveSpeed = inputs[5] && inputs[0] ? sprintSpeed : moveSpeed;
+            _moveDirection = Vector3.ClampMagnitude(_moveDirection, 1f) * _moveSpeed;
+        }
+        else
+        {
+            _moveDirection = aerialDirection;
+        }
 
         _moveDirection.y = yVelocity;
         controller.Move(_moveDirection);
@@ -143,6 +155,10 @@ public class Player : MonoBehaviour
                     nextTimeToFire = Time.time + 1 / fireRate;
                     _shootDirection = Recoil(_shootDirection);
                     FireWeapon(_shootDirection);
+                }
+                else if(ammoCapacity == 0)
+                {
+                    Reload();
                 }
             }
         }
