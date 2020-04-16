@@ -5,15 +5,21 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     public Transform camTransform;
+    public PlayerManager player;
 
-    public void Update()
+    private void Start()
+    {
+        player = GetComponent<PlayerManager>();
+    }
+
+    private void Update()
     {
         if (Input.GetKey(KeyCode.Mouse0) && Cursor.lockState == CursorLockMode.Locked)
         {
             ClientSend.PlayerShoot(camTransform.forward);
         }
 
-        if (Input.GetKeyDown(KeyCode.R) && GetComponent<PlayerManager>().ammoCapacity < GetComponent<PlayerManager>().maxAmmoCapacity)
+        if (Input.GetKeyDown(KeyCode.R) && player.ammoCapacity < player.maxAmmoCapacity)
         {
             ClientSend.PlayerReload();
             UIManager.AmmoCapacity("Reloading");
@@ -27,6 +33,11 @@ public class PlayerController : MonoBehaviour
         else if (Input.GetKeyUp(KeyCode.Tab))
         {
             UIManager.Scoreboard(false);
+        }
+
+        if (player.isDead && Input.GetKeyDown(KeyCode.F))
+        {
+            ClientSend.PlayerRespawn();
         }
     }
 

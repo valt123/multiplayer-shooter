@@ -53,4 +53,10 @@ public class ServerHandle
         var _player = Server.clients[_fromClient].player;
         _player.TakeDamage(_player.maxHealth, _fromClient);
     }
+
+    public static void PlayerRespawn(int _fromClient, Packet _packet)
+    {
+        var _player = Server.clients[_fromClient].player;
+        _player.Respawn();
+    }
 }

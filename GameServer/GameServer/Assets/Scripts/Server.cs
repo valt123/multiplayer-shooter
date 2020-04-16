@@ -121,7 +121,8 @@ public class Server
                 { (int)ClientPackets.playerMovement, ServerHandle.PlayerMovement },
                 { (int)ClientPackets.playerShoot, ServerHandle.PlayerShoot },
                 { (int)ClientPackets.playerReload, ServerHandle.PlayerReload },
-                { (int)ClientPackets.playerSuicide, ServerHandle.PlayerSuicide }
+                { (int)ClientPackets.playerSuicide, ServerHandle.PlayerSuicide },
+                { (int)ClientPackets.playerRespawn, ServerHandle.PlayerRespawn }
             };
         Debug.Log("Initialized packets");
     }
