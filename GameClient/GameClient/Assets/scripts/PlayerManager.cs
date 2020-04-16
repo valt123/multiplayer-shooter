@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerManager : MonoBehaviour
 {
@@ -12,6 +13,7 @@ public class PlayerManager : MonoBehaviour
 
     public int kills;
     public int deaths;
+    public bool isDead = false;
 
     public Transform tommyGun;
     public int ammoCapacity = 50;
@@ -29,10 +31,16 @@ public class PlayerManager : MonoBehaviour
 
     public GameObject shootOrigin;
     public GameObject nameText;
+    public Slider healthSlider;
     public Transform cameraTransform;
-    private Vector3 lastPosition;
-    public float speed;
+    public Vector3 velocity;
     public bool isGrounded;
+
+    public GameObject spectatorPrefab;
+    public GameObject spectator;
+
+    public GameObject playerCorpsePrefab;
+    private GameObject playerCorpse;
 
     public void Initialize(int _id, string _username, int _kills, int _deaths)
     {
@@ -59,31 +67,40 @@ public class PlayerManager : MonoBehaviour
         {
             UIManager.DamageOverlay(health, maxHealth);
         }
+
+        if (!IsLocalPlayer())
+        {
+            healthSlider.value = CalculateHealth();
+        }
+
+        TurnNameTextTowardLocalPlayer();
+    }
+
+    float CalculateHealth()
+    {
+        return health / maxHealth;
     }
 
     void FixedUpdate()
     {
-        speed = (transform.position - lastPosition).magnitude;
-        lastPosition = transform.position;
-        Debug.Log(speed);
 
-        if (speed > 0f && !playerAudioSource.isPlaying && isGrounded )
+        if (velocity.magnitude > 0f && !playerAudioSource.isPlaying && isGrounded )
         {
             playerAudioSource.volume = PlayerPrefs.GetFloat("Volume", 0.5f);
 
-            if (speed > 0.1f)
+            if (velocity.magnitude > 7)
             {
+                playerAudioSource.maxDistance = 50;
                 playerAudioSource.pitch = Random.Range(1f, 1.1f);
             }
             else
             {
-                playerAudioSource.pitch = Random.Range(0.7f, 0.9f);
+                playerAudioSource.maxDistance = 30;
+                playerAudioSource.pitch = Random.Range(0.6f, 0.8f);
             }
             
             playerAudioSource.Play();
         }
-
-        TurnNameTextTowardLocalPlayer();
     }
 
     public void SetHealth(float _health)
@@ -103,15 +120,47 @@ public class PlayerManager : MonoBehaviour
             _model.enabled = false;
         }
         nameText.SetActive(false);
+        cameraTransform.gameObject.SetActive(false);
 
+        isDead = true;
+
+        SpawnCorpse();
         if (IsLocalPlayer())
         {
+            SpawnSpectator();
             UIManager.DeathScreen(true);
         }
     }
 
+    public void SpawnCorpse()
+    {
+        playerCorpse = Instantiate(playerCorpsePrefab, transform.position - new Vector3(0, 0.9f, 0), transform.rotation);
+
+        var _children = playerCorpse.GetComponentsInChildren<Transform>();
+        foreach (var _child in _children)
+        {
+            _child.gameObject.AddComponent<Rigidbody>();
+        }
+        Destroy(playerCorpse, 60f);
+    }
+
+    public void SpawnSpectator()
+    {
+        spectator = Instantiate(spectatorPrefab, transform.position - transform.forward * 5f + transform.up * 5f, transform.rotation);
+        spectator.transform.LookAt(transform.position);
+        UIManager.ToggleHud(false);
+    }
+
+    public void DestroySpectator()
+    {
+        Destroy(spectator);
+        UIManager.ToggleHud(true);
+    }
+
     public void Respawn()
     {
+        DestroySpectator();
+        cameraTransform.gameObject.SetActive(true);
         foreach (MeshRenderer _model in model)
         {
             _model.enabled = true;
@@ -124,16 +173,20 @@ public class PlayerManager : MonoBehaviour
         {
             UIManager.DeathScreen(false);
         }
+
+        isDead = false;
     }
 
     public void ShootReceived(Vector3 _endPosition, bool _didHitPlayer)
     {
         tommyGun.LookAt(_endPosition);
 
+        AddForceToRigidbody(shootOrigin.transform.position, _endPosition, 25f);
+
         ShotTracer(_endPosition);
         shootOrigin.GetComponent<ParticleSystem>().Play();
 
-        shootOriginAudioSource.pitch = Random.Range(1, 1.1f);
+        shootOriginAudioSource.pitch = Random.Range(1.1f, 1.2f);
         shootOriginAudioSource.PlayOneShot(gunShotSounds[Random.Range(0, gunShotSounds.Length)], PlayerPrefs.GetFloat("Volume", 0.5f));
 
         boltAnimator.Play("Bolt_firing");
@@ -141,6 +194,38 @@ public class PlayerManager : MonoBehaviour
         if (_didHitPlayer)
         {
             AudioSource.PlayClipAtPoint(playerHitSound[Random.Range(0, gunShotSounds.Length)], _endPosition, PlayerPrefs.GetFloat("Volume", 0.5f));
+        }
+    }
+
+    public void AddForceToRigidbody(Vector3 _position, Vector3 _endPosition, float _force)
+    {
+        Debug.DrawRay(_position, (_endPosition - _position), Color.red, 10f);
+        if (Physics.Raycast(_position, _endPosition - _position, out RaycastHit _hit, 100f))
+        {
+            Rigidbody rb = _hit.collider.attachedRigidbody;
+
+            if (rb != null)
+            {
+                var _forceDirection = rb.transform.position - _position;
+
+                rb.AddForce(_forceDirection * 50f);
+            }
+        }
+    }
+
+    // AddForceToRigidbodiesWithinRadius(_endPosition, 3f, 1000f);
+    public void AddForceToRigidbodiesWithinRadius(Vector3 _position, float _radius, float _force)
+    {
+        Collider[] hitColliders = Physics.OverlapSphere(_position, _radius);
+        foreach(var _collider in hitColliders)
+        {
+            Rigidbody rb = _collider.gameObject.GetComponent<Rigidbody>();
+
+            if (rb != null)
+            {
+                var _forceDirection = rb.transform.position - _position;
+                rb.AddForceAtPosition(_forceDirection * _force, _position);
+            }
         }
     }
 

@@ -306,6 +306,7 @@ public class Client : MonoBehaviour
             foreach(var _key in GameManager.players.Keys)
             {
                 Destroy(GameManager.players[_key].gameObject);
+                Destroy(GameManager.players[_key].spectator);
             }
             
             GameManager.players.Clear();

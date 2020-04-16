@@ -6,6 +6,7 @@ ScriptsOnlyBuild:
     - GameManager
     - PlayerController
     - PlayerManager
+    - Spectator
     - ThreadManager
     - UIManager
     Unity.Rider.Editor.dll:
@@ -52,6 +53,8 @@ ScriptsOnlyBuild:
       Script: {instanceID: 0}
     - Class: 64
       Script: {instanceID: 0}
+    - Class: 65
+      Script: {instanceID: 0}
     - Class: 74
       Script: {instanceID: 0}
     - Class: 81
@@ -73,40 +76,46 @@ ScriptsOnlyBuild:
     - Class: 108
       Script: {instanceID: 0}
     - Class: 114
-      Script: {instanceID: 11556}
+      Script: {instanceID: 11588}
     - Class: 114
-      Script: {instanceID: 11692}
+      Script: {instanceID: 11606}
     - Class: 114
-      Script: {instanceID: 11730}
+      Script: {instanceID: 11810}
     - Class: 114
-      Script: {instanceID: 11756}
+      Script: {instanceID: 11860}
     - Class: 114
-      Script: {instanceID: 11834}
+      Script: {instanceID: 11898}
     - Class: 114
-      Script: {instanceID: 11866}
+      Script: {instanceID: 12006}
     - Class: 114
-      Script: {instanceID: 12086}
+      Script: {instanceID: 12044}
     - Class: 114
-      Script: {instanceID: 12102}
+      Script: {instanceID: 12342}
     - Class: 114
-      Script: {instanceID: 12230}
+      Script: {instanceID: 12364}
     - Class: 114
-      Script: {instanceID: 12362}
+      Script: {instanceID: 12542}
     - Class: 114
-      Script: {instanceID: 12412}
+      Script: {instanceID: 12738}
     - Class: 114
-      Script: {instanceID: 12572}
+      Script: {instanceID: 12794}
     - Class: 114
-      Script: {instanceID: 12830}
+      Script: {instanceID: 13024}
     - Class: 114
-      Script: {instanceID: 13078}
+      Script: {instanceID: 13374}
     - Class: 114
-      Script: {instanceID: 13132}
+      Script: {instanceID: 13740}
     - Class: 114
-      Script: {instanceID: 13156}
+      Script: {instanceID: 13808}
+    - Class: 114
+      Script: {instanceID: 13846}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
+      Script: {instanceID: 0}
+    - Class: 135
+      Script: {instanceID: 0}
+    - Class: 136
       Script: {instanceID: 0}
     - Class: 154
       Script: {instanceID: 0}
@@ -133,6 +142,12 @@ ScriptsOnlyBuild:
     - Class: 258
       Script: {instanceID: 0}
   scriptHashData:
+  - hash:
+      serializedVersion: 2
+      Hash: 3e6f83ce675a8e3f28bd0ce806c18896
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: Spectator
   - hash:
       serializedVersion: 2
       Hash: 4bc4346a71a8df53a6b106f68ef3a190
@@ -303,7 +318,7 @@ ScriptsOnlyBuild:
     className: ControlPlayableAsset
   - hash:
       serializedVersion: 2
-      Hash: 559de2a12c7b99467c3fe090708f5a2a
+      Hash: 91d7d3077cfb36c2b62c1a81b0d7b2bc
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: CameraController
@@ -321,7 +336,7 @@ ScriptsOnlyBuild:
     className: Selectable
   - hash:
       serializedVersion: 2
-      Hash: 93f47f9d0655411fc2776859c14b99b9
+      Hash: fbac1bce0c56508fca15919c8467989a
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: UIManager
@@ -345,7 +360,7 @@ ScriptsOnlyBuild:
     className: RemoteTestResultSender
   - hash:
       serializedVersion: 2
-      Hash: 6751b3bae008182423c27f879fe3adf5
+      Hash: 4e6c8365ae6048410b731d4b442c5048
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: PlayerManager
@@ -447,7 +462,7 @@ ScriptsOnlyBuild:
     className: BaseInput
   - hash:
       serializedVersion: 2
-      Hash: 6177a2f89b36d53e7c1656c459c26d1f
+      Hash: fa18fb35898b2ee692cd668126f9b7fc
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: PlayerController

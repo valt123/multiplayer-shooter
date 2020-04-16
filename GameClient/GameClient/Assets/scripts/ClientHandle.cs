@@ -34,9 +34,11 @@ public class ClientHandle : MonoBehaviour
         int _id = _packet.ReadInt();
         Vector3 _position = _packet.ReadVector3();
         bool _isGrounded = _packet.ReadBool();
+        Vector3 _velocity = _packet.ReadVector3();
 
         GameManager.players[_id].transform.position = _position;
         GameManager.players[_id].isGrounded = _isGrounded;
+        GameManager.players[_id].velocity = _velocity;
     }
 
     public static void PlayerRotation(Packet _packet)

@@ -6,13 +6,18 @@ public class Player : MonoBehaviour
 {
     public int id;
     public string username;
+
     public CharacterController controller;
     public Transform shootOrigin;
     public Transform facing;
+
     public float health;
     public float maxHealth = 100f;
+
     public int kills = 0;
     public int deaths = 0;
+
+    public float respawnTime = 1f;
     private Vector3 aerialDirection;
 
     public bool isRegen = false;
@@ -28,6 +33,7 @@ public class Player : MonoBehaviour
     public float jumpSpeed = 10f;
     private bool[] inputs;
     private float yVelocity = 0;
+    public Vector3 velocity;
     #endregion
 
     #region Weapon variables
@@ -130,6 +136,7 @@ public class Player : MonoBehaviour
 
         _moveDirection.y = yVelocity;
         controller.Move(_moveDirection);
+        velocity = controller.velocity;
 
         ServerSend.PlayerPosition(this);
         ServerSend.PlayerRotation(this);
@@ -196,10 +203,12 @@ public class Player : MonoBehaviour
             {
                 ServerSend.PlayerShootReceived(this, _hit.point, false);
             }
+            Debug.DrawRay(shootOrigin.position, shootOrigin.position + (_shootDirection.normalized * 50f), Color.green);
         }
         else
         {
             Vector3 _target = shootOrigin.position + (_shootDirection.normalized * 50f);
+            Debug.DrawRay(shootOrigin.position, _target, Color.red);
             ServerSend.PlayerShootReceived(this, _target, false);
         }
 
@@ -248,15 +257,17 @@ public class Player : MonoBehaviour
             isRegen = !isRegen;
         }
 
+        ServerSend.PlayerHealth(this);
+
         if (health <= 0f)
         {
             health = 0f;
             controller.enabled = false;
+
             transform.position = SpawnManager.SpawnLocation();
             ServerSend.PlayerPosition(this);
-            
+
             isDead = true;
-            StartCoroutine(Respawn());
 
             this.deaths += 1;
             if (_damageSourceId != this.id)
@@ -267,20 +278,17 @@ public class Player : MonoBehaviour
                 ServerSend.PlayerKills(_killer, this);
             }
         }
-
-        ServerSend.PlayerHealth(this);
     }
 
-    private IEnumerator Respawn()
+    public void Respawn()
     {
-        yield return new WaitForSeconds(5f);
-
         health = maxHealth;
         controller.enabled = true;
         isDead = false;
         ammoCapacity = maxAmmoCapacity;
-        ServerSend.PlayerRespawned(this);
+
         ServerSend.PlayerAmmoCapacity(this, ammoCapacity, maxAmmoCapacity);
+        ServerSend.PlayerRespawned(this);
     }
 
     IEnumerator Regen()

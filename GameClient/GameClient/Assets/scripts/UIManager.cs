@@ -12,6 +12,7 @@ public class UIManager : MonoBehaviour
     public GameObject startMenu;
     public InputField usernameField;
     public InputField ipAddress;
+    public GameObject startCamera;
     #endregion
 
     #region Hud variables
@@ -31,7 +32,7 @@ public class UIManager : MonoBehaviour
     #region Killfeed variables
     public Transform killFeedTemplate;
     public Transform killFeedContainer;
-    public List<GameObject> killFeedItemList = new List<GameObject>();
+    private List<GameObject> killFeedItemList = new List<GameObject>();
     #endregion
 
     #region Pause menu
@@ -64,6 +65,29 @@ public class UIManager : MonoBehaviour
         ipAddress.text = PlayerPrefs.GetString("IPaddress");
     }
 
+    private void Update()
+    {
+        if (Input.GetKeyUp(KeyCode.Escape) && !startMenu.activeSelf)
+        {
+            ToggleCursorMode();
+            PauseMenu();
+        }
+    }
+
+    private void ToggleCursorMode()
+    {
+        if (Cursor.lockState == CursorLockMode.None)
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
+        else
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+        }
+    }
+
     #region Hud stuff
     public static void AmmoCapacity(string _ammoCapacity)
     {
@@ -88,11 +112,22 @@ public class UIManager : MonoBehaviour
         instance.damageOverlay.CrossFadeAlpha(Math.Abs(alpha), 0.1f, false);
     }
 
+    public static void ToggleHud(bool toggle)
+    {
+        instance.hud.SetActive(toggle);
+
+        if (toggle)
+        {
+            instance.hitMarker.canvasRenderer.SetAlpha(0);
+        }
+    }
+
     #endregion
 
     #region Start menu
     public void ConnectToServer()
     {
+        startMenu.SetActive(true);
         hitMarker.canvasRenderer.SetAlpha(0);
         damageOverlay.canvasRenderer.SetAlpha(0);
 
@@ -110,6 +145,8 @@ public class UIManager : MonoBehaviour
 
             PlayerPrefs.SetString("Username", usernameField.text);
             PlayerPrefs.SetString("IPaddress", ipAddress.text);
+
+            startCamera.SetActive(false);
         }
 
         catch
@@ -137,8 +174,10 @@ public class UIManager : MonoBehaviour
         Client.instance.Disconnect();
 
         startMenu.SetActive(true);
+        startCamera.SetActive(true);
         hud.SetActive(false);
         pauseMenu.SetActive(false);
+        deathScreen.SetActive(false);
     }
 
     public void Respawn()
@@ -249,7 +288,6 @@ public class UIManager : MonoBehaviour
         Destroy(_killFeedItem.gameObject);
     }
     #endregion
-
 
     public static void FadeIn(Image _image, float _duration)
     {
