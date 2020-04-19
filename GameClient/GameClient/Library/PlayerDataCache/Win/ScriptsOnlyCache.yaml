@@ -76,39 +76,39 @@ ScriptsOnlyBuild:
     - Class: 108
       Script: {instanceID: 0}
     - Class: 114
-      Script: {instanceID: 11588}
+      Script: {instanceID: 11582}
     - Class: 114
-      Script: {instanceID: 11606}
+      Script: {instanceID: 11596}
     - Class: 114
-      Script: {instanceID: 11810}
+      Script: {instanceID: 11732}
     - Class: 114
-      Script: {instanceID: 11860}
+      Script: {instanceID: 11770}
     - Class: 114
-      Script: {instanceID: 11898}
+      Script: {instanceID: 11796}
     - Class: 114
-      Script: {instanceID: 12006}
+      Script: {instanceID: 11874}
     - Class: 114
-      Script: {instanceID: 12044}
+      Script: {instanceID: 11906}
     - Class: 114
-      Script: {instanceID: 12342}
+      Script: {instanceID: 12126}
     - Class: 114
-      Script: {instanceID: 12364}
+      Script: {instanceID: 12142}
     - Class: 114
-      Script: {instanceID: 12542}
+      Script: {instanceID: 12270}
     - Class: 114
-      Script: {instanceID: 12738}
+      Script: {instanceID: 12402}
     - Class: 114
-      Script: {instanceID: 12794}
+      Script: {instanceID: 12452}
     - Class: 114
-      Script: {instanceID: 13024}
+      Script: {instanceID: 12612}
     - Class: 114
-      Script: {instanceID: 13374}
+      Script: {instanceID: 12870}
     - Class: 114
-      Script: {instanceID: 13740}
+      Script: {instanceID: 13118}
     - Class: 114
-      Script: {instanceID: 13808}
+      Script: {instanceID: 13172}
     - Class: 114
-      Script: {instanceID: 13846}
+      Script: {instanceID: 13196}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -360,7 +360,7 @@ ScriptsOnlyBuild:
     className: RemoteTestResultSender
   - hash:
       serializedVersion: 2
-      Hash: 4e6c8365ae6048410b731d4b442c5048
+      Hash: 6adc5ba4a95505c9f120614f00556e82
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: PlayerManager

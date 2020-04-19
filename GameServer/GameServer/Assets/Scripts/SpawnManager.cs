@@ -42,7 +42,7 @@ public class SpawnManager : MonoBehaviour
         {
             bool isPlayerNearSpawn = false;
 
-            Collider[] hitColliders = Physics.OverlapSphere(spawnPoint.transform.position, 20f);
+            Collider[] hitColliders = Physics.OverlapSphere(spawnPoint.transform.position, 15f);
 
             foreach (var collider in hitColliders)
             {
@@ -66,5 +66,6 @@ public class SpawnManager : MonoBehaviour
         {
            return safeSpawns.ToArray()[Random.Range(0, safeSpawns.Count)];
         }
+        
     }
 }

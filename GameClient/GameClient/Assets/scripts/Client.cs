@@ -290,7 +290,8 @@ public class Client : MonoBehaviour
             { (int)ServerPackets.playerShootReceived, ClientHandle.PlayerShootReceived },
             { (int)ServerPackets.playerIsReloading, ClientHandle.PlayerIsReloading },
             { (int)ServerPackets.playerAmmoCapacity, ClientHandle.PlayerAmmoCapacity },
-            { (int)ServerPackets.playerKills, ClientHandle.PlayerKills }
+            { (int)ServerPackets.playerKills, ClientHandle.PlayerKills },
+            { (int)ServerPackets.playerMeleed, ClientHandle.PlayerMeleed }
         };
         Debug.Log("Initizalised packets");
     }

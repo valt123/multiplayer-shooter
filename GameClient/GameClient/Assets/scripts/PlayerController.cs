@@ -14,27 +14,37 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
+        // Shoot on left mouse click
         if (Input.GetKey(KeyCode.Mouse0) && Cursor.lockState == CursorLockMode.Locked)
         {
             ClientSend.PlayerShoot(camTransform.forward);
         }
 
+        // Melee when E is pressed
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            ClientSend.PlayerMelee(camTransform.forward);
+        }
+
+        // Reload on pressing R
         if (Input.GetKeyDown(KeyCode.R) && player.ammoCapacity < player.maxAmmoCapacity)
         {
             ClientSend.PlayerReload();
             UIManager.AmmoCapacity("Reloading");
         }
 
+        // Show scoreboard when pressing tab
         if (Input.GetKeyDown(KeyCode.Tab))
         {
             UIManager.Scoreboard(true);
         }
-
+        // Hide scoreboard when letting go tab
         else if (Input.GetKeyUp(KeyCode.Tab))
         {
             UIManager.Scoreboard(false);
         }
 
+        // Spawn when F is pressed if dead
         if (player.isDead && Input.GetKeyDown(KeyCode.F))
         {
             ClientSend.PlayerRespawn();

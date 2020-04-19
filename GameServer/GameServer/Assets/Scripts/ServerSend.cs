@@ -156,6 +156,16 @@ public class ServerSend
         }
     }
 
+    public static void PlayerMeleed(Player _player)
+    {
+        using (Packet _packet = new Packet((int)ServerPackets.playerMeleed))
+        {
+            _packet.Write(_player.id);
+
+            SendTCPDataToAll(_packet);
+        }
+    }
+
     public static void PlayerIsReloading(Player _player)
     {
         using (Packet _packet = new Packet((int)ServerPackets.playerIsReloading))

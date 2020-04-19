@@ -21,6 +21,7 @@ public class PlayerManager : MonoBehaviour
     public GameObject magazine;
     public Animator boltAnimator;
 
+    public GameObject knife;
     public AudioClip[] gunShotSounds;
     public AudioClip[] playerHitSound;
     public AudioClip[] movementSounds;
@@ -72,7 +73,6 @@ public class PlayerManager : MonoBehaviour
         {
             healthSlider.value = CalculateHealth();
         }
-
         TurnNameTextTowardLocalPlayer();
     }
 
@@ -115,6 +115,7 @@ public class PlayerManager : MonoBehaviour
 
     public void Die()
     {
+        GetComponent<Collider>().enabled = false;
         foreach (MeshRenderer _model in model )
         {
             _model.enabled = false;
@@ -159,6 +160,7 @@ public class PlayerManager : MonoBehaviour
 
     public void Respawn()
     {
+        GetComponent<Collider>().enabled = true;
         DestroySpectator();
         cameraTransform.gameObject.SetActive(true);
         foreach (MeshRenderer _model in model)
@@ -195,6 +197,11 @@ public class PlayerManager : MonoBehaviour
         {
             AudioSource.PlayClipAtPoint(playerHitSound[Random.Range(0, gunShotSounds.Length)], _endPosition, PlayerPrefs.GetFloat("Volume", 0.5f));
         }
+    }
+
+    public void PlayerMeleed()
+    {
+        knife.GetComponent<Animator>().Play("Stab");
     }
 
     public void AddForceToRigidbody(Vector3 _position, Vector3 _endPosition, float _force)
@@ -252,7 +259,15 @@ public class PlayerManager : MonoBehaviour
 
     void TurnNameTextTowardLocalPlayer()
     {
-        nameText.transform.LookAt(2 * nameText.transform.position - GameManager.players[Client.instance.myId].transform.position);
+        if (!LocalPlayer().isDead)
+        {
+            nameText.transform.LookAt(2 * nameText.transform.position - LocalPlayer().transform.position);
+        }
+        else
+        {
+            nameText.transform.LookAt(2 * nameText.transform.position - LocalPlayer().spectator.transform.position);
+        }
+        
     }
 
     public void PlayerReloading()
@@ -280,5 +295,10 @@ public class PlayerManager : MonoBehaviour
     public bool IsLocalPlayer()
     {
         return id == Client.instance.myId;
+    }
+
+    public PlayerManager LocalPlayer()
+    {
+        return GameManager.players[Client.instance.myId];
     }
 }

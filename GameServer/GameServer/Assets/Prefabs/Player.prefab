@@ -116,6 +116,7 @@ MonoBehaviour:
   maxHealth: 100
   kills: 0
   deaths: 0
+  respawnTime: 1
   isRegen: 0
   regenWaitTime: 2.5
   regenSpeed: 0.06
@@ -123,11 +124,14 @@ MonoBehaviour:
   moveSpeed: 4
   sprintSpeed: 9
   jumpSpeed: 4
+  velocity: {x: 0, y: 0, z: 0}
   fireRate: 20
   ammoCapacity: 50
   maxAmmoCapacity: 50
-  damage: 20
+  damage: 15
   reloadSpeed: 2.5
+  meleeDamage: 100
+  meleeCooldown: 1
 --- !u!143 &5253208414585210733
 CharacterController:
   m_ObjectHideFlags: 0
