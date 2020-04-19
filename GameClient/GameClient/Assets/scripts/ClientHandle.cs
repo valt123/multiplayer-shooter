@@ -88,6 +88,13 @@ public class ClientHandle : MonoBehaviour
         GameManager.players[_id].ShootReceived(_target, _didHitPlayer);
     }
 
+    public static void PlayerMeleed(Packet _packet)
+    {
+        int _id = _packet.ReadInt();
+
+        GameManager.players[_id].PlayerMeleed();
+    }
+
     public static void PlayerIsReloading(Packet _packet)
     {
         int _id = _packet.ReadInt();

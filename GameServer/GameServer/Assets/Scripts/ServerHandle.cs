@@ -36,6 +36,12 @@ public class ServerHandle
         Server.clients[_fromClient].player.SetInput(_inputs, _rotation, _cameraRotation);
     }
 
+    public static void PlayerMelee(int _fromClient, Packet _packet)
+    {
+        Vector3 _meleeDirection = _packet.ReadVector3();
+        Server.clients[_fromClient].player.Melee(_meleeDirection);
+    }
+
     public static void PlayerShoot(int _fromClient, Packet _packet)
     {
         Vector3 _shootDirection = _packet.ReadVector3();

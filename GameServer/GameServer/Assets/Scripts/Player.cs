@@ -46,8 +46,13 @@ public class Player : MonoBehaviour
     private float nextTimeToFire = 0f;
     private float verticalRecoil = 0f;
     private bool isReloading = false;
-    private bool isDead = false;
+
+    public float meleeDamage = 100f;
+    public float meleeCooldown = 1f;
+    private float nextMelee;
     #endregion
+
+    private bool isDead = false;
 
     private void Start()
     {
@@ -242,6 +247,26 @@ public class Player : MonoBehaviour
     }
     #endregion
 
+    #region Melee
+    public void Melee(Vector3 _meleeDirection)
+    {
+        if (nextMelee <= Time.time && !isDead)
+        {
+            nextMelee = Time.time + meleeCooldown;
+            ServerSend.PlayerMeleed(Server.clients[this.id].player);
+
+            if (Physics.Raycast(shootOrigin.position, _meleeDirection, out RaycastHit _hit, 3f))
+            {
+                if (_hit.collider.CompareTag("Player"))
+                {
+                    _hit.collider.GetComponent<Player>().TakeDamage(meleeDamage, this.id);
+                }
+                Debug.DrawRay(shootOrigin.position, shootOrigin.position + (_meleeDirection.normalized * 1f), Color.green);
+            }
+        }
+    }
+    #endregion
+
     public void TakeDamage(float _damage, int _damageSourceId)
     {
         if (health <= 0)
@@ -264,9 +289,6 @@ public class Player : MonoBehaviour
             health = 0f;
             controller.enabled = false;
 
-            transform.position = SpawnManager.SpawnLocation();
-            ServerSend.PlayerPosition(this);
-
             isDead = true;
 
             this.deaths += 1;
@@ -283,6 +305,10 @@ public class Player : MonoBehaviour
     public void Respawn()
     {
         health = maxHealth;
+
+        transform.position = SpawnManager.SpawnLocation();
+        ServerSend.PlayerPosition(this);
+
         controller.enabled = true;
         isDead = false;
         ammoCapacity = maxAmmoCapacity;

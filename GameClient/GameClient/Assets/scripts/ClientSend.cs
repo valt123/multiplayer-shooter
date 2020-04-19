@@ -44,6 +44,15 @@ public class ClientSend : MonoBehaviour
         }
     }
 
+    public static void PlayerMelee(Vector3 _facing)
+    {
+        using (Packet _packet = new Packet((int)ClientPackets.playerMelee))
+        {
+            _packet.Write(_facing);
+            SendTCPData(_packet);
+        }
+    }
+
     public static void PlayerShoot(Vector3 _facing)
     {
         using (Packet _packet = new Packet((int)ClientPackets.playerShoot))
