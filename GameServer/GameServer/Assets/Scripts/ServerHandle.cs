@@ -46,7 +46,7 @@ public class ServerHandle
     {
         Vector3 _shootDirection = _packet.ReadVector3();
 
-        Server.clients[_fromClient].player.Shoot(_shootDirection);
+        Server.clients[_fromClient].player.tommyGun.Shoot(_shootDirection);
     }
 
     public static void PlayerReload(int _fromClient, Packet _packet)
