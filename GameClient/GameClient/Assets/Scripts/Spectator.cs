@@ -67,18 +67,4 @@ public class Spectator : MonoBehaviour
 
         transform.localRotation = Quaternion.Euler(verticalRotation, horizontalRotation, 0f);
     }
-
-    private void ToggleCursorMode()
-    {
-        if (Cursor.lockState == CursorLockMode.None)
-        {
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
-        }
-        else
-        {
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
-        }
-    }
 }
