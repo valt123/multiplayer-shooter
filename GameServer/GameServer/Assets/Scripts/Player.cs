@@ -11,40 +11,44 @@ public class Player : MonoBehaviour
     public Transform shootOrigin;
     public Transform facing;
 
+    #region Health
     public float health;
     public float maxHealth = 100f;
     public bool isDead = false;
 
-    public int kills = 0;
-    public int deaths = 0;
-
-    public TommyGun tommyGun;
-    public bool isReloading = false;
-
-    public float respawnTime = 1f;
-    private Vector3 aerialDirection;
-
     public bool isRegen = false;
     public float regenWaitTime = 2f;
     public float regenSpeed = 0.1f;
+    private IEnumerator regenCoroutine;
 
-    private IEnumerator coroutine;
+    //Currently not implemented 
+    public float respawnTime = 1f;
+    #endregion
+
+    public int kills = 0;
+    public int deaths = 0;
 
     #region Movement variables
     public float gravity = -9.81f;
     public float walkSpeed = 5f;
     public float sprintSpeed = 10f;
+    public bool isRunning;
     public float jumpSpeed = 10f;
+
     private bool[] inputs;
     private float yVelocity = 0;
     public Vector3 velocity;
-    enum InputKeys { w, s, a, d, space, shift };
+    private Vector3 aerialDirection;
+
     #endregion
 
-    #region Melee variables
+    #region Weapon variables
     public float meleeDamage = 100f;
     public float meleeCooldown = 1f;
     private float nextMelee;
+
+    public TommyGun tommyGun;
+    public bool isReloading = false;
     #endregion
 
     private void Start()
@@ -79,53 +83,42 @@ public class Player : MonoBehaviour
         }
         else if (health != maxHealth && !isRegen)
         {
-            coroutine = Regen();
-            StartCoroutine(coroutine);
+            regenCoroutine = Regen();
+            StartCoroutine(regenCoroutine);
         }
+
         Vector2 _inputDirection = Vector2.zero;
 
         if (inputs[(int)InputKeys.w])
         {
             _inputDirection.y += 1;
         }
+
         if (inputs[(int)InputKeys.s])
         {
             _inputDirection.y -= 1;
         }
+
         if (inputs[(int)InputKeys.a])
         {
             _inputDirection.x -= 1;
         }
+
         if (inputs[(int)InputKeys.d])
         {
             _inputDirection.x += 1;
         }
+
+        if ( inputs[(int)InputKeys.w] && inputs[(int)InputKeys.shift])
+        {
+            isRunning = true;
+        }
+        else
+        {
+            isRunning = false;
+        }
         
         Move(_inputDirection);
-    }
-
-    public void Reload()
-    {
-        if (!isReloading && !isDead)
-        {
-            isReloading = true;
-            ServerSend.PlayerIsReloading(this);
-            StartCoroutine(ReloadWeapon());
-        }
-    }
-
-    private IEnumerator ReloadWeapon()
-    {
-        yield return new WaitForSeconds(tommyGun.reloadSpeed);
-
-        tommyGun.ammoCapacity = tommyGun.maxAmmoCapacity;
-        ServerSend.PlayerAmmoCapacity(this, tommyGun.ammoCapacity, tommyGun.maxAmmoCapacity);
-        isReloading = false;
-    }
-
-    public bool CanShoot()
-    {
-        return isDead || isReloading ? false : true;
     }
 
     #region Movement
@@ -174,7 +167,7 @@ public class Player : MonoBehaviour
     }
     #endregion
 
-    #region Melee
+    #region Weapons
     public void Melee(Vector3 _meleeDirection)
     {
         if (nextMelee <= Time.time && !isDead)
@@ -192,6 +185,30 @@ public class Player : MonoBehaviour
             }
         }
     }
+
+    public void Reload()
+    {
+        if (!isReloading && !isDead)
+        {
+            isReloading = true;
+            ServerSend.PlayerIsReloading(this);
+            StartCoroutine(ReloadWeapon());
+        }
+    }
+
+    private IEnumerator ReloadWeapon()
+    {
+        yield return new WaitForSeconds(tommyGun.reloadSpeed);
+
+        tommyGun.ammoCapacity = tommyGun.maxAmmoCapacity;
+        ServerSend.PlayerAmmoCapacity(this, tommyGun.ammoCapacity, tommyGun.maxAmmoCapacity);
+        isReloading = false;
+    }
+
+    public bool CanShoot()
+    {
+        return isDead || isReloading ? false : true;
+    }
     #endregion
 
     public void TakeDamage(float _damage, int _damageSourceId)
@@ -205,7 +222,7 @@ public class Player : MonoBehaviour
 
         if (isRegen)
         {
-            StopCoroutine(coroutine);
+            StopCoroutine(regenCoroutine);
             isRegen = !isRegen;
         }
 
@@ -246,10 +263,10 @@ public class Player : MonoBehaviour
 
     IEnumerator Regen()
     {
-        isRegen = true; //Set regenning to true
+        isRegen = true;
         yield return new WaitForSeconds(regenWaitTime); //Wait for delay
 
-        while (health< maxHealth)
+        while (health < maxHealth)
         { //Start the regen cycle
             health += 1; //Increase health by 1
             ServerSend.PlayerHealth(this);
