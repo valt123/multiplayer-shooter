@@ -13,9 +13,13 @@ public class Player : MonoBehaviour
 
     public float health;
     public float maxHealth = 100f;
+    public bool isDead = false;
 
     public int kills = 0;
     public int deaths = 0;
+
+    public TommyGun tommyGun;
+    public bool isReloading = false;
 
     public float respawnTime = 1f;
     private Vector3 aerialDirection;
@@ -28,38 +32,29 @@ public class Player : MonoBehaviour
 
     #region Movement variables
     public float gravity = -9.81f;
-    public float moveSpeed = 5f;
+    public float walkSpeed = 5f;
     public float sprintSpeed = 10f;
     public float jumpSpeed = 10f;
     private bool[] inputs;
     private float yVelocity = 0;
     public Vector3 velocity;
+    enum InputKeys { w, s, a, d, space, shift };
     #endregion
 
-    #region Weapon variables
-    public float fireRate = 20f;
-    public int ammoCapacity = 50;
-    public int maxAmmoCapacity = 50;
-    public float damage = 15f;
-    public float reloadSpeed = 3f;
-    private float lastFired = 0f;
-    private float nextTimeToFire = 0f;
-    private float verticalRecoil = 0f;
-    private bool isReloading = false;
-
+    #region Melee variables
     public float meleeDamage = 100f;
     public float meleeCooldown = 1f;
     private float nextMelee;
     #endregion
 
-    private bool isDead = false;
-
     private void Start()
     {
         gravity *= Time.fixedDeltaTime * Time.fixedDeltaTime;
-        moveSpeed *= Time.fixedDeltaTime;
+        walkSpeed *= Time.fixedDeltaTime;
         sprintSpeed *= Time.fixedDeltaTime;
         jumpSpeed *= Time.fixedDeltaTime;
+
+        tommyGun = new TommyGun(this);
     }
 
     public void Initialize(int _id, string _username)
@@ -89,24 +84,48 @@ public class Player : MonoBehaviour
         }
         Vector2 _inputDirection = Vector2.zero;
 
-        if (inputs[0])
+        if (inputs[(int)InputKeys.w])
         {
             _inputDirection.y += 1;
         }
-        if (inputs[1])
+        if (inputs[(int)InputKeys.s])
         {
             _inputDirection.y -= 1;
         }
-        if (inputs[2])
+        if (inputs[(int)InputKeys.a])
         {
             _inputDirection.x -= 1;
         }
-        if (inputs[3])
+        if (inputs[(int)InputKeys.d])
         {
             _inputDirection.x += 1;
         }
         
         Move(_inputDirection);
+    }
+
+    public void Reload()
+    {
+        if (!isReloading && !isDead)
+        {
+            isReloading = true;
+            ServerSend.PlayerIsReloading(this);
+            StartCoroutine(ReloadWeapon());
+        }
+    }
+
+    private IEnumerator ReloadWeapon()
+    {
+        yield return new WaitForSeconds(tommyGun.reloadSpeed);
+
+        tommyGun.ammoCapacity = tommyGun.maxAmmoCapacity;
+        ServerSend.PlayerAmmoCapacity(this, tommyGun.ammoCapacity, tommyGun.maxAmmoCapacity);
+        isReloading = false;
+    }
+
+    public bool CanShoot()
+    {
+        return isDead || isReloading ? false : true;
     }
 
     #region Movement
@@ -120,7 +139,7 @@ public class Player : MonoBehaviour
                 yVelocity = jumpSpeed;
                 aerialDirection = transform.right * _inputDirection.x + transform.forward * _inputDirection.y;
 
-                float _moveSpeed = inputs[5] && inputs[0] ? sprintSpeed : moveSpeed;
+                float _moveSpeed = inputs[5] && inputs[0] ? sprintSpeed : walkSpeed;
                 aerialDirection = Vector3.ClampMagnitude(aerialDirection, 1f) * _moveSpeed;
             }
         }
@@ -131,7 +150,7 @@ public class Player : MonoBehaviour
         {
             _moveDirection = transform.right * _inputDirection.x + transform.forward * _inputDirection.y;
 
-            float _moveSpeed = inputs[5] && inputs[0] ? sprintSpeed : moveSpeed;
+            float _moveSpeed = inputs[(int)InputKeys.shift] && inputs[(int)InputKeys.w] ? sprintSpeed : walkSpeed;
             _moveDirection = Vector3.ClampMagnitude(_moveDirection, 1f) * _moveSpeed;
         }
         else
@@ -152,98 +171,6 @@ public class Player : MonoBehaviour
         inputs = _inputs;
         transform.rotation = _rotation;
         facing.rotation = _cameraRotation;
-    }
-    #endregion
-
-    #region Shooting
-    public void Shoot(Vector3 _shootDirection)
-    {
-        if (Time.time >= nextTimeToFire)
-        {
-            if ( CanShoot() )
-            {
-                if (ammoCapacity > 0)
-                {
-                    nextTimeToFire = Time.time + 1 / fireRate;
-                    _shootDirection = Recoil(_shootDirection);
-                    FireWeapon(_shootDirection);
-                }
-                else if(ammoCapacity == 0)
-                {
-                    Reload();
-                }
-            }
-        }
-    }
-
-    private Vector3 Recoil(Vector3 _shootDirection)
-    {
-        if (Time.time - lastFired <= 0.3f)
-        {
-            if (verticalRecoil <= 0.1f)
-            {
-                verticalRecoil += 0.01f;
-            }
-        }
-        else
-        {
-            verticalRecoil = 0f;
-        }
-
-        float randX = 0;
-        float randY = Random.Range(0, verticalRecoil);
-        return _shootDirection += new Vector3(randX, randY, 0);
-    }
-
-    private void FireWeapon(Vector3 _shootDirection)
-    {
-        if (Physics.Raycast(shootOrigin.position, _shootDirection, out RaycastHit _hit, 50f))
-        {
-            if (_hit.collider.CompareTag("Player"))
-            {
-                _hit.collider.GetComponent<Player>().TakeDamage(damage, this.id);
-                ServerSend.PlayerShootReceived(this, _hit.point, true);
-            }
-            else
-            {
-                ServerSend.PlayerShootReceived(this, _hit.point, false);
-            }
-            Debug.DrawRay(shootOrigin.position, shootOrigin.position + (_shootDirection.normalized * 50f), Color.green);
-        }
-        else
-        {
-            Vector3 _target = shootOrigin.position + (_shootDirection.normalized * 50f);
-            Debug.DrawRay(shootOrigin.position, _target, Color.red);
-            ServerSend.PlayerShootReceived(this, _target, false);
-        }
-
-        ammoCapacity -= 1;
-        ServerSend.PlayerAmmoCapacity(this, ammoCapacity, maxAmmoCapacity);
-        lastFired = Time.time;
-    }
-
-    public void Reload()
-    {
-        if (!isReloading && !isDead)
-        {
-            isReloading = true;
-            ServerSend.PlayerIsReloading(this);
-            StartCoroutine(ReloadWeapon());
-        }
-    }
-
-    public bool CanShoot()
-    {
-        return isDead || isReloading ? false : true;
-    }
-
-    private IEnumerator ReloadWeapon()
-    {
-        yield return new WaitForSeconds(reloadSpeed);
-
-        ammoCapacity = maxAmmoCapacity;
-        ServerSend.PlayerAmmoCapacity(this, ammoCapacity, maxAmmoCapacity);
-        isReloading = false;
     }
     #endregion
 
@@ -311,9 +238,9 @@ public class Player : MonoBehaviour
 
         controller.enabled = true;
         isDead = false;
-        ammoCapacity = maxAmmoCapacity;
+        tommyGun.ammoCapacity = tommyGun.maxAmmoCapacity;
 
-        ServerSend.PlayerAmmoCapacity(this, ammoCapacity, maxAmmoCapacity);
+        ServerSend.PlayerAmmoCapacity(this, tommyGun.ammoCapacity, tommyGun.maxAmmoCapacity);
         ServerSend.PlayerRespawned(this);
     }
 
