@@ -132,22 +132,29 @@ MonoBehaviour:
   facing: {fileID: 4333842743542050748}
   health: 0
   maxHealth: 100
-  kills: 0
-  deaths: 0
-  reloadSpeed: 2.5
-  isReloading: 0
-  respawnTime: 1
+  isDead: 0
   isRegen: 0
   regenWaitTime: 2.5
   regenSpeed: 0.06
-  gravity: -9.81
+  respawnTime: 1
+  kills: 0
+  deaths: 0
   walkSpeed: 5
   sprintSpeed: 9
-  jumpSpeed: 4
+  minSprintSpeed: 5
+  gravity: -9.81
+  jumpSpeed: 5
+  minJumpSpeed: 3
+  isRunning: 0
+  stamina: 100
+  maxStamina: 100
+  staminaSprintDecrease: 10
+  staminaJumpDecrease: 50
+  staminaRegen: 40
   velocity: {x: 0, y: 0, z: 0}
   meleeDamage: 100
   meleeCooldown: 1
-  isDead: 0
+  isReloading: 0
 --- !u!1001 &5994683004831750190
 PrefabInstance:
   m_ObjectHideFlags: 0

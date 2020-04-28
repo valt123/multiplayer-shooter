@@ -96,6 +96,8 @@ public class ServerSend
             _packet.Write(_player.transform.position);
             _packet.Write(_player.controller.isGrounded);
             _packet.Write(_player.velocity);
+            _packet.Write(_player.stamina);
+            _packet.Write(_player.maxStamina);
 
             SendUDPDataToAll(_packet);
         }

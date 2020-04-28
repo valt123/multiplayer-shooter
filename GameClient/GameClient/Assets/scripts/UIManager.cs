@@ -16,13 +16,16 @@ public class UIManager : MonoBehaviour
     #endregion
 
     #region Hud variables
+    [Header("Hud variables")]
     public GameObject hud;
     public Text ammoCapacity;
     public Image hitMarker;
     public Image damageOverlay;
+    public Image staminaOverlay;
     #endregion
 
     #region Scoreboard variables
+    [Header("Scoreboard variables")]
     public GameObject scoreBoard;
 
     public Transform entryContainer;
@@ -30,12 +33,14 @@ public class UIManager : MonoBehaviour
     #endregion
 
     #region Killfeed variables
+    [Header("Killfeed variables")]
     public Transform killFeedTemplate;
     public Transform killFeedContainer;
     private List<GameObject> killFeedItemList = new List<GameObject>();
     #endregion
 
-    #region Pause menu
+    #region Pause menu variables
+    [Header("Pause menu variables")]
     public GameObject pauseMenu;
 
     public GameObject optionsMenu;
@@ -43,7 +48,10 @@ public class UIManager : MonoBehaviour
     public Slider sensitivity;
     #endregion
 
+    #region Misc variables
+    [Header("Misc variables")]
     public GameObject deathScreen;
+    #endregion
 
     private void Awake()
     {
@@ -60,6 +68,7 @@ public class UIManager : MonoBehaviour
 
         hitMarker.canvasRenderer.SetAlpha(0);
         damageOverlay.canvasRenderer.SetAlpha(0);
+        staminaOverlay.canvasRenderer.SetAlpha(0);
 
         usernameField.text = PlayerPrefs.GetString("Username");
         ipAddress.text = PlayerPrefs.GetString("IPaddress");
@@ -112,6 +121,13 @@ public class UIManager : MonoBehaviour
         instance.damageOverlay.CrossFadeAlpha(Math.Abs(alpha), 0.1f, false);
     }
 
+    public static void StaminaOverlay(float _stamina, float _maxStamina)
+    {
+        var alpha = -(_stamina / _maxStamina) + 1;
+
+        instance.staminaOverlay.canvasRenderer.SetAlpha(alpha);
+    }
+
     public static void ToggleHud(bool toggle)
     {
         instance.hud.SetActive(toggle);
@@ -130,6 +146,7 @@ public class UIManager : MonoBehaviour
         startMenu.SetActive(true);
         hitMarker.canvasRenderer.SetAlpha(0);
         damageOverlay.canvasRenderer.SetAlpha(0);
+        staminaOverlay.canvasRenderer.SetAlpha(0);
 
         if (ipAddress.text == "")
         {

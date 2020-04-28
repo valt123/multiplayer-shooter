@@ -13,5 +13,6 @@ public class TommyGun : Weapon
         damage = 15f;
         maxRecoil = 0.1f;
         recoilIncrease = 0.01f;
+        weaponRange = 50f;
     }
 }
