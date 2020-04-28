@@ -10,16 +10,21 @@ public class PlayerManager : MonoBehaviour
 
     public float health;
     public float maxHealth;
+    public float stamina;
+    public float maxStamina;
 
     public int kills;
     public int deaths;
     public bool isDead = false;
+
+    public Transform weaponHolder;
 
     public Transform tommyGun;
     public int ammoCapacity = 50;
     public int maxAmmoCapacity = 50;
     public GameObject magazine;
     public Animator boltAnimator;
+    private Coroutine restoreGunRotation;
 
     public GameObject knife;
     public AudioClip[] gunShotSounds;
@@ -34,8 +39,11 @@ public class PlayerManager : MonoBehaviour
     public GameObject nameText;
     public Slider healthSlider;
     public Transform cameraTransform;
+
     public Vector3 velocity;
     public bool isGrounded;
+    private float idleToRun;
+    private bool isIdleToRunChanging;
 
     public GameObject spectatorPrefab;
     public GameObject spectator;
@@ -67,6 +75,7 @@ public class PlayerManager : MonoBehaviour
         if (IsLocalPlayer())
         {
             UIManager.DamageOverlay(health, maxHealth);
+            UIManager.StaminaOverlay(stamina, maxStamina);
         }
 
         if (!IsLocalPlayer())
@@ -74,17 +83,14 @@ public class PlayerManager : MonoBehaviour
             healthSlider.value = CalculateHealth();
         }
         TurnNameTextTowardLocalPlayer();
+
+
+        MovementAnimationAndSounds();
     }
 
-    float CalculateHealth()
+    private void MovementAnimationAndSounds()
     {
-        return health / maxHealth;
-    }
-
-    void FixedUpdate()
-    {
-
-        if (velocity.magnitude > 0f && !playerAudioSource.isPlaying && isGrounded )
+        if (velocity.magnitude > 0f && isGrounded)
         {
             playerAudioSource.volume = PlayerPrefs.GetFloat("Volume", 0.5f);
 
@@ -92,15 +98,49 @@ public class PlayerManager : MonoBehaviour
             {
                 playerAudioSource.maxDistance = 50;
                 playerAudioSource.pitch = Random.Range(1f, 1.1f);
+
+                if (!isIdleToRunChanging && idleToRun < 1) StartCoroutine(ChangeIdleToRun(idleToRun, 1f, .5f));
             }
-            else
+            else if (velocity.magnitude < 7)
             {
                 playerAudioSource.maxDistance = 30;
                 playerAudioSource.pitch = Random.Range(0.6f, 0.8f);
+
+                if (!isIdleToRunChanging && idleToRun > 0) StartCoroutine(ChangeIdleToRun(idleToRun, 0f, .5f));
             }
-            
-            playerAudioSource.Play();
+
+            if (!playerAudioSource.isPlaying)
+            {
+                playerAudioSource.Play();
+            }
+            //Debug.Log(velocity.magnitude);
         }
+        else if (velocity.magnitude == 0)
+        {
+            if (!isIdleToRunChanging && idleToRun != 0) StartCoroutine(ChangeIdleToRun(idleToRun, 0f, .5f));
+        }
+
+        tommyGun.GetComponent<Animator>().SetFloat("IdleToRun", idleToRun);
+    }
+
+    IEnumerator ChangeIdleToRun(float value, float targetValue, float duration)
+    {
+        isIdleToRunChanging = true;
+        var t = 0f;
+        while (t < duration)
+        {
+            t += Time.deltaTime;
+            idleToRun = Mathf.Lerp(value, targetValue, t / duration);
+            yield return null;
+        }
+        isIdleToRunChanging = false;
+        idleToRun = targetValue;
+        yield break;
+    }
+
+    float CalculateHealth()
+    {
+        return health / maxHealth;
     }
 
     public void SetHealth(float _health)
@@ -181,7 +221,13 @@ public class PlayerManager : MonoBehaviour
 
     public void ShootReceived(Vector3 _endPosition, bool _didHitPlayer)
     {
-        tommyGun.LookAt(_endPosition);
+        if (restoreGunRotation != null)
+        {
+            StopCoroutine(restoreGunRotation);
+            restoreGunRotation = null;
+        }
+
+        weaponHolder.LookAt(_endPosition);
 
         AddForceToRigidbody(shootOrigin.transform.position, _endPosition, 25f);
 
@@ -197,6 +243,27 @@ public class PlayerManager : MonoBehaviour
         {
             AudioSource.PlayClipAtPoint(playerHitSound[Random.Range(0, gunShotSounds.Length)], _endPosition, PlayerPrefs.GetFloat("Volume", 0.5f));
         }
+
+        restoreGunRotation = StartCoroutine(RestoreGunRotation());
+
+    }
+
+    private IEnumerator RestoreGunRotation()
+    {
+        yield return new WaitForSeconds(.5f);
+        var duration = .5f;
+        var _currentRotation = weaponHolder.localRotation;
+
+        var t = 0f;
+        while (t < duration)
+        {
+            t += Time.deltaTime / duration;
+            weaponHolder.localRotation = Quaternion.Lerp(_currentRotation, Quaternion.Euler(0,0,0), t / duration);
+            yield return null;
+        }
+        weaponHolder.localRotation = Quaternion.Euler(0, 0, 0);
+
+        yield break;
     }
 
     public void PlayerMeleed()

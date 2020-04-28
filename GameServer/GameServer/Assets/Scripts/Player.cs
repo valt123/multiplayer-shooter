@@ -11,7 +11,8 @@ public class Player : MonoBehaviour
     public Transform shootOrigin;
     public Transform facing;
 
-    #region Health
+    #region Health variables
+    [Header("Health Variables")]
     public float health;
     public float maxHealth = 100f;
     public bool isDead = false;
@@ -25,24 +26,43 @@ public class Player : MonoBehaviour
     public float respawnTime = 1f;
     #endregion
 
+    #region Score variables
+    [Header("Score variables")]
     public int kills = 0;
     public int deaths = 0;
+    #endregion
 
     #region Movement variables
-    public float gravity = -9.81f;
+    [Header("Movement variables")]
     public float walkSpeed = 5f;
+
     public float sprintSpeed = 10f;
-    public bool isRunning;
+    public float minSprintSpeed = 4f;
+
+    public float gravity = -9.81f;
     public float jumpSpeed = 10f;
+    public float minJumpSpeed = 5f;
 
     private bool[] inputs;
     private float yVelocity = 0;
     public Vector3 velocity;
     private Vector3 aerialDirection;
 
+    #region Stamina variables
+    [Header("Stamina variables")]
+    public bool isRunning;
+    public float stamina = 100f;
+    public float maxStamina = 100f;
+
+    public float staminaSprintDecrease = 10f;
+    public float staminaJumpDecrease = 20f;
+    public float staminaRegen = 40f;
+    #endregion
+
     #endregion
 
     #region Weapon variables
+    [Header("Weapon variables")]
     public float meleeDamage = 100f;
     public float meleeCooldown = 1f;
     private float nextMelee;
@@ -56,7 +76,9 @@ public class Player : MonoBehaviour
         gravity *= Time.fixedDeltaTime * Time.fixedDeltaTime;
         walkSpeed *= Time.fixedDeltaTime;
         sprintSpeed *= Time.fixedDeltaTime;
+        minSprintSpeed *= Time.fixedDeltaTime;
         jumpSpeed *= Time.fixedDeltaTime;
+        minJumpSpeed *= Time.fixedDeltaTime;
 
         tommyGun = new TommyGun(this);
     }
@@ -77,6 +99,8 @@ public class Player : MonoBehaviour
             return;
         }
 
+        Stamina();
+
         if (health > maxHealth)
         {
             health = maxHealth;
@@ -87,6 +111,13 @@ public class Player : MonoBehaviour
             StartCoroutine(regenCoroutine);
         }
 
+        Vector2 _inputDirection = InputDirection();
+
+        Move(_inputDirection);
+    }
+
+    private Vector2 InputDirection()
+    {
         Vector2 _inputDirection = Vector2.zero;
 
         if (inputs[(int)InputKeys.w])
@@ -109,7 +140,7 @@ public class Player : MonoBehaviour
             _inputDirection.x += 1;
         }
 
-        if ( inputs[(int)InputKeys.w] && inputs[(int)InputKeys.shift])
+        if (inputs[(int)InputKeys.w] && inputs[(int)InputKeys.shift])
         {
             isRunning = true;
         }
@@ -117,33 +148,64 @@ public class Player : MonoBehaviour
         {
             isRunning = false;
         }
-        
-        Move(_inputDirection);
+
+        return _inputDirection;
     }
 
     #region Movement
+
+    private void Stamina()
+    {
+        if (isRunning)
+        {
+            stamina -= staminaSprintDecrease * Time.fixedDeltaTime;
+
+            if (stamina < 0)
+            {
+                stamina = 0;
+            }
+        }
+        else
+        {
+            stamina += staminaRegen * Time.fixedDeltaTime;
+            
+            if (stamina > maxStamina)
+            {
+                stamina = maxStamina;
+            }
+        }
+    }
+
     private void Move(Vector2 _inputDirection)
     {
+        float _moveSpeed;
+        Vector3 _moveDirection;
+
         if (controller.isGrounded)
         {
             yVelocity = 0f;
-            if (inputs[4])
+
+            if (isRunning)
             {
-                yVelocity = jumpSpeed;
-                aerialDirection = transform.right * _inputDirection.x + transform.forward * _inputDirection.y;
-
-                float _moveSpeed = inputs[5] && inputs[0] ? sprintSpeed : walkSpeed;
-                aerialDirection = Vector3.ClampMagnitude(aerialDirection, 1f) * _moveSpeed;
+                _moveSpeed = Mathf.Lerp(minSprintSpeed, sprintSpeed, stamina / maxStamina);
             }
-        }
-        yVelocity += gravity;
+            else
+            {
+                _moveSpeed = walkSpeed;
+            }
 
-        Vector3 _moveDirection;
-        if (controller.isGrounded)
-        {
+            if (inputs[(int)InputKeys.space])
+            {
+                stamina -= staminaJumpDecrease;
+                if (stamina < 0)
+                {
+                    stamina = 0;
+                }
+                yVelocity = Mathf.Lerp(minJumpSpeed, jumpSpeed, stamina / maxStamina);
+                
+                AerialDirection(_inputDirection, _moveSpeed);
+            }
             _moveDirection = transform.right * _inputDirection.x + transform.forward * _inputDirection.y;
-
-            float _moveSpeed = inputs[(int)InputKeys.shift] && inputs[(int)InputKeys.w] ? sprintSpeed : walkSpeed;
             _moveDirection = Vector3.ClampMagnitude(_moveDirection, 1f) * _moveSpeed;
         }
         else
@@ -151,12 +213,21 @@ public class Player : MonoBehaviour
             _moveDirection = aerialDirection;
         }
 
+        yVelocity += gravity;
         _moveDirection.y = yVelocity;
+
         controller.Move(_moveDirection);
+
         velocity = controller.velocity;
 
         ServerSend.PlayerPosition(this);
         ServerSend.PlayerRotation(this);
+    }
+
+    private void AerialDirection(Vector2 _inputDirection, float _moveSpeed)
+    {
+        aerialDirection = transform.right * _inputDirection.x + transform.forward * _inputDirection.y;
+        aerialDirection = Vector3.ClampMagnitude(aerialDirection, 1f) * _moveSpeed;
     }
 
     public void SetInput(bool[] _inputs, Quaternion _rotation, Quaternion _cameraRotation)
@@ -207,10 +278,11 @@ public class Player : MonoBehaviour
 
     public bool CanShoot()
     {
-        return isDead || isReloading ? false : true;
+        return isDead || isReloading || isRunning ? false : true;
     }
     #endregion
 
+    #region Health
     public void TakeDamage(float _damage, int _damageSourceId)
     {
         if (health <= 0)
@@ -274,4 +346,5 @@ public class Player : MonoBehaviour
         }
         isRegen = false; //Set regenning to false
     }
+    #endregion
 }

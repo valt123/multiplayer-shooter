@@ -3,16 +3,17 @@ using System.Collections;
 
 public class Weapon
 {
+    public Player shooter;
+
     private float lastFired = 0f;
     private float nextTimeToFire = 0f;
     private float verticalRecoil = 0f;
-
-    public float fireRate;
-    public float damage;
-    public Player shooter;
-    public float weaponRange;
     public float maxRecoil;
     public float recoilIncrease;
+
+    public float fireRate = 20f;
+    public float damage = 15f;
+    public float weaponRange = 50f;
 
     public int ammoCapacity;
     public int maxAmmoCapacity;
@@ -28,7 +29,7 @@ public class Weapon
                 _shootDirection = Recoil(_shootDirection);
                 FireWeapon(_shootDirection);
             }
-            else
+            else if(ammoCapacity == 0)
             {
                 shooter.Reload();
             }

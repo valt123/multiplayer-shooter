@@ -40,12 +40,4 @@ public class NetworkManager : MonoBehaviour
     {
         return Instantiate(playerPrefab, SpawnManager.SpawnLocation(), Quaternion.identity).GetComponent<Player>();
     }
-
-    public static Vector3 randomSpawn()
-    {
-        float x = Random.Range(5, 45);
-        float y = 10;
-        float z = Random.Range(4, 46);
-        return new Vector3(x, y, z);
-    }
 }
