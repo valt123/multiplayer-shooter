@@ -191,6 +191,37 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!1 &1902061908192802651
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1362226797601352008}
+  m_Layer: 0
+  m_Name: WeaponHolder
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1362226797601352008
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1902061908192802651}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.514, y: -0.568, z: 0.762}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 4944861155993491887}
+  m_Father: {fileID: 8091874891943314830}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2534049596739915795
 GameObject:
   m_ObjectHideFlags: 0
@@ -218,7 +249,7 @@ Transform:
   m_LocalPosition: {x: 0, y: 0.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 4944861155993491887}
+  - {fileID: 1362226797601352008}
   - {fileID: 7777147957103752402}
   m_Father: {fileID: 6720481834528355589}
   m_RootOrder: 1
@@ -1261,6 +1292,7 @@ MonoBehaviour:
   kills: 0
   deaths: 0
   isDead: 0
+  weaponHolder: {fileID: 1362226797601352008}
   tommyGun: {fileID: 4944861155993491887}
   ammoCapacity: 50
   maxAmmoCapacity: 50
@@ -6336,14 +6368,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8933883936199661342}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.514, y: -0.568, z: 0.762}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 3114352461469663103}
   - {fileID: 7967057673751520015}
   - {fileID: 4315755227252660000}
   - {fileID: 7388817695530129550}
-  m_Father: {fileID: 8091874891943314830}
+  m_Father: {fileID: 1362226797601352008}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!95 &2090345015095744046
