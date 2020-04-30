@@ -24,7 +24,7 @@ public class PlayerManager : MonoBehaviour
     public int maxAmmoCapacity = 50;
     public GameObject magazine;
     public Animator boltAnimator;
-    private Coroutine restoreGunRotation;
+    private Coroutine changeGunRotationCoroutine;
 
     public GameObject knife;
     public AudioClip[] gunShotSounds;
@@ -40,6 +40,7 @@ public class PlayerManager : MonoBehaviour
     public Slider healthSlider;
     public Transform cameraTransform;
 
+    private Quaternion lastRot;
     public Vector3 velocity;
     public bool isGrounded;
     private float idleToRun;
@@ -84,8 +85,15 @@ public class PlayerManager : MonoBehaviour
         }
         TurnNameTextTowardLocalPlayer();
 
-
         MovementAnimationAndSounds();
+
+        var yTurn = Input.GetAxis("Mouse X");
+        var xTurn = -Input.GetAxis("Mouse Y");
+
+        if (changeGunRotationCoroutine == null)
+        {
+            changeGunRotationCoroutine = StartCoroutine(LerpGunRotation(Quaternion.Euler(xTurn, yTurn * 2, 0), .3f, true, false));
+        }
     }
 
     private void MovementAnimationAndSounds()
@@ -221,14 +229,17 @@ public class PlayerManager : MonoBehaviour
 
     public void ShootReceived(Vector3 _endPosition, bool _didHitPlayer)
     {
-        if (restoreGunRotation != null)
+        if (changeGunRotationCoroutine != null)
         {
-            StopCoroutine(restoreGunRotation);
-            restoreGunRotation = null;
+            StopCoroutine(changeGunRotationCoroutine);
+            changeGunRotationCoroutine = null;
         }
 
-        weaponHolder.LookAt(_endPosition);
+        Debug.Log(weaponHolder.position);
+        var _lookRotation = Quaternion.LookRotation(_endPosition - weaponHolder.position);
 
+        changeGunRotationCoroutine = StartCoroutine(LerpGunRotation(_lookRotation, .1f, false, false));
+        
         AddForceToRigidbody(shootOrigin.transform.position, _endPosition, 25f);
 
         ShotTracer(_endPosition);
@@ -244,25 +255,52 @@ public class PlayerManager : MonoBehaviour
             AudioSource.PlayClipAtPoint(playerHitSound[Random.Range(0, gunShotSounds.Length)], _endPosition, PlayerPrefs.GetFloat("Volume", 0.5f));
         }
 
-        restoreGunRotation = StartCoroutine(RestoreGunRotation());
 
+        if (changeGunRotationCoroutine != null)
+        {
+            StopCoroutine(changeGunRotationCoroutine);
+            changeGunRotationCoroutine = null;
+        }
+        changeGunRotationCoroutine = StartCoroutine(LerpGunRotation( Quaternion.Euler(0,0,0), .5f ));
     }
 
-    private IEnumerator RestoreGunRotation()
+    private IEnumerator LerpGunRotation(Quaternion target, float duration, bool localRotation = true , bool waitBefore = true)
     {
-        yield return new WaitForSeconds(.5f);
-        var duration = .5f;
-        var _currentRotation = weaponHolder.localRotation;
+        if (waitBefore)
+        {
+            yield return new WaitForSeconds(.5f);
+        }
+        Quaternion _currentRotation;
+
+        _currentRotation = localRotation ? weaponHolder.localRotation : weaponHolder.rotation;
 
         var t = 0f;
         while (t < duration)
         {
             t += Time.deltaTime / duration;
-            weaponHolder.localRotation = Quaternion.Lerp(_currentRotation, Quaternion.Euler(0,0,0), t / duration);
+
+            if (localRotation)
+            {
+                weaponHolder.localRotation = Quaternion.Slerp(_currentRotation, target, t / duration);
+            }
+            else
+            {
+                weaponHolder.rotation = Quaternion.Slerp(_currentRotation, target, t / duration);
+            }
+            
             yield return null;
         }
-        weaponHolder.localRotation = Quaternion.Euler(0, 0, 0);
 
+        if (localRotation)
+        {
+            weaponHolder.localRotation = target;
+        }
+        else
+        {
+            weaponHolder.rotation = target;
+        }
+
+        changeGunRotationCoroutine = null;
         yield break;
     }
 
