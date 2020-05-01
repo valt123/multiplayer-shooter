@@ -83,16 +83,20 @@ public class PlayerManager : MonoBehaviour
         {
             healthSlider.value = CalculateHealth();
         }
+
         TurnNameTextTowardLocalPlayer();
 
         MovementAnimationAndSounds();
 
-        var yTurn = Input.GetAxis("Mouse X");
-        var xTurn = -Input.GetAxis("Mouse Y");
-
-        if (changeGunRotationCoroutine == null)
+        if (IsLocalPlayer() && Cursor.lockState == CursorLockMode.Locked)
         {
-            changeGunRotationCoroutine = StartCoroutine(LerpGunRotation(Quaternion.Euler(xTurn, yTurn * 2, 0), .3f, true, false));
+            var horizontalTurn = Input.GetAxis("Mouse X");
+            var verticalTurn = -Input.GetAxis("Mouse Y");
+
+            if (changeGunRotationCoroutine == null)
+            {
+                changeGunRotationCoroutine = StartCoroutine(LerpGunRotation(Quaternion.Euler(verticalTurn, horizontalTurn * 2, 0), .3f, true, false));
+            }
         }
     }
 
@@ -146,7 +150,7 @@ public class PlayerManager : MonoBehaviour
         yield break;
     }
 
-    float CalculateHealth()
+    private float CalculateHealth()
     {
         return health / maxHealth;
     }
@@ -174,6 +178,7 @@ public class PlayerManager : MonoBehaviour
         isDead = true;
 
         SpawnCorpse();
+
         if (IsLocalPlayer())
         {
             SpawnSpectator();
@@ -252,7 +257,7 @@ public class PlayerManager : MonoBehaviour
 
         if (_didHitPlayer)
         {
-            AudioSource.PlayClipAtPoint(playerHitSound[Random.Range(0, gunShotSounds.Length)], _endPosition, PlayerPrefs.GetFloat("Volume", 0.5f));
+            //AudioSource.PlayClipAtPoint(playerHitSound[Random.Range(0, gunShotSounds.Length)], _endPosition, PlayerPrefs.GetFloat("Volume", 0.5f));
         }
 
 

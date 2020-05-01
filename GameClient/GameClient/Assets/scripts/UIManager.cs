@@ -174,16 +174,21 @@ public class UIManager : MonoBehaviour
     }
     #endregion
 
-    #region Pause menu stuff
+    #region Pause menu
     public static void PauseMenu()
     {
         instance.pauseMenu.SetActive(Cursor.lockState == CursorLockMode.None);
 
-        if (Cursor.lockState == CursorLockMode.Locked && instance.optionsMenu.activeSelf)
+        if (Cursor.lockState == CursorLockMode.Locked && !IsPauseMenuOn())
         {
             instance.CloseOptions();
         }
-        
+
+    }
+
+    public static bool IsPauseMenuOn()
+    {
+        return instance.startMenu.activeSelf;
     }
 
     public void DisconnectFromServer()

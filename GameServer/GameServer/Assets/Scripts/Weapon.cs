@@ -26,7 +26,7 @@ public class Weapon
             if (ammoCapacity > 0 && shooter.CanShoot())
             {
                 nextTimeToFire = Time.time + 1 / fireRate;
-                _shootDirection = Recoil(_shootDirection);
+                //_shootDirection = Recoil(_shootDirection);
                 FireWeapon(_shootDirection);
             }
             else if(ammoCapacity == 0)
@@ -68,11 +68,11 @@ public class Weapon
             {
                 ServerSend.PlayerShootReceived(shooter, _hit.point, false);
             }
-            Debug.DrawRay(shooter.shootOrigin.position, shooter.shootOrigin.position + (_shootDirection.normalized * weaponRange), Color.green);
+            Debug.DrawLine(shooter.shootOrigin.position, shooter.shootOrigin.position + (_shootDirection * weaponRange), Color.green, 5f);
         }
         else
         {
-            Vector3 _target = shooter.shootOrigin.position + (_shootDirection.normalized * 50f);
+            Vector3 _target = shooter.shootOrigin.position + (_shootDirection * 50f);
             Debug.DrawRay(shooter.shootOrigin.position, _target, Color.red);
             ServerSend.PlayerShootReceived(shooter, _target, false);
         }
