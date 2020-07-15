@@ -71,6 +71,12 @@ public class ClientHandle : MonoBehaviour
         GameManager.players[_id].SetHealth(_health);
     }
 
+    public static void PlayerTakeDamage(Packet _packet)
+    {
+        int _enemyId = _packet.ReadInt();
+        Client.LocalPlayer().TakeDamage(_enemyId);
+    }
+
     public static void PlayerRespawned(Packet _packet)
     {
         int _id = _packet.ReadInt();
@@ -95,6 +101,12 @@ public class ClientHandle : MonoBehaviour
     public static void PlayerMeleed(Packet _packet)
     {
         int _id = _packet.ReadInt();
+        bool _hitPlayer = _packet.ReadBool();
+
+        if (_hitPlayer && Client.IsLocalPlayer(_id))
+        {
+            UIManager.HitMark();
+        }
 
         GameManager.players[_id].PlayerMeleed();
     }

@@ -186,6 +186,13 @@ public class PlayerManager : MonoBehaviour
         }
     }
 
+    public void TakeDamage(int _enemy)
+    {
+        var enemy = GameManager.players[_enemy];
+
+        Debug.Log( (transform.position - enemy.transform.position).normalized );
+    }
+
     public void SpawnCorpse()
     {
         playerCorpse = Instantiate(playerCorpsePrefab, transform.position - new Vector3(0, 0.9f, 0), transform.rotation);
@@ -240,7 +247,6 @@ public class PlayerManager : MonoBehaviour
             changeGunRotationCoroutine = null;
         }
 
-        Debug.Log(weaponHolder.position);
         var _lookRotation = Quaternion.LookRotation(_endPosition - weaponHolder.position);
 
         changeGunRotationCoroutine = StartCoroutine(LerpGunRotation(_lookRotation, .1f, false, false));
@@ -404,7 +410,7 @@ public class PlayerManager : MonoBehaviour
 
     public bool IsLocalPlayer()
     {
-        return id == Client.instance.myId;
+        return Client.IsLocalPlayer(id);
     }
 
     public PlayerManager LocalPlayer()
