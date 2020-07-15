@@ -410,7 +410,7 @@ public class PlayerManager : MonoBehaviour
 
     public bool IsLocalPlayer()
     {
-        return id == Client.instance.myId;
+        return Client.IsLocalPlayer(id);
     }
 
     public PlayerManager LocalPlayer()
