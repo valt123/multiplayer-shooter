@@ -20,8 +20,12 @@ public class UIManager : MonoBehaviour
     public GameObject hud;
     public Text ammoCapacity;
     public Image hitMarker;
+
     public Image damageOverlay;
     public Image staminaOverlay;
+
+    public GameObject damageIndicator;
+    private Coroutine hideDamageIndicator;
     #endregion
 
     #region Scoreboard variables

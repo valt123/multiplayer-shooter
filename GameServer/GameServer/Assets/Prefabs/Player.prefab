@@ -129,6 +129,7 @@ MonoBehaviour:
   id: 0
   username: 
   controller: {fileID: 5253208414585210733}
+  playerCollider: {fileID: 1356635449016014311}
   shootOrigin: {fileID: 7415770129633293726}
   facing: {fileID: 4333842743542050748}
   health: 0

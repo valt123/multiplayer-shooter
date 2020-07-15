@@ -26,7 +26,7 @@ public class Weapon
             if (ammoCapacity > 0 && shooter.CanShoot())
             {
                 nextTimeToFire = Time.time + 1 / fireRate;
-                //_shootDirection = Recoil(_shootDirection);
+                _shootDirection = Recoil(_shootDirection);
                 FireWeapon(_shootDirection);
             }
             else if(ammoCapacity == 0)

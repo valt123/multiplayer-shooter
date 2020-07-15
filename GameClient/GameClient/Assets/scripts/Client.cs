@@ -321,4 +321,9 @@ public class Client : MonoBehaviour
     {
         return GameManager.players[instance.myId];
     }
+
+    public static bool IsLocalPlayer(int _id)
+    {
+        return _id == instance.myId;
+    }
 }

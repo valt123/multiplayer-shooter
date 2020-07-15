@@ -12,7 +12,8 @@ public enum ServerPackets
     playerAmmoCapacity,
     playerIsReloading,
     playerKills,
-    playerMeleed
+    playerMeleed,
+    playerTakeDamage
 }
 
 /// <summary>Sent from client to server.</summary>

@@ -15,7 +15,7 @@ public class SpawnManager : MonoBehaviour
             instance = this;
         }
 
-        if (instance != this)
+        else if (instance != this)
         {
             Debug.Log("Instance already exists");
             Destroy(gameObject);

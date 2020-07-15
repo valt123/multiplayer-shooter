@@ -136,6 +136,16 @@ public class ServerSend
         }
     }
 
+    public static void PlayerTakeDamage(Player _player, int _enemyId)
+    {
+        using (Packet _packet = new Packet((int)ServerPackets.playerTakeDamage))
+        {
+            _packet.Write(_enemyId);
+
+            SendTCPData(_player.id, _packet);
+        }
+    }
+
     public static void PlayerRespawned(Player _player)
     {
         using (Packet _packet = new Packet((int)ServerPackets.playerRespawned))
@@ -158,12 +168,12 @@ public class ServerSend
         }
     }
 
-    public static void PlayerMeleed(Player _player)
+    public static void PlayerMeleed(Player _player, bool _hitPlayer)
     {
         using (Packet _packet = new Packet((int)ServerPackets.playerMeleed))
         {
             _packet.Write(_player.id);
-
+            _packet.Write(_hitPlayer);
             SendTCPDataToAll(_packet);
         }
     }

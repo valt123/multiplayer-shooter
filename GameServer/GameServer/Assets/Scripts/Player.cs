@@ -8,6 +8,7 @@ public class Player : MonoBehaviour
     public string username;
 
     public CharacterController controller;
+    public Collider playerCollider;
     public Transform shootOrigin;
     public Transform facing;
 
@@ -244,16 +245,20 @@ public class Player : MonoBehaviour
         if (nextMelee <= Time.time && !isDead)
         {
             nextMelee = Time.time + meleeCooldown;
-            ServerSend.PlayerMeleed(Server.clients[this.id].player);
+
+            bool hitPlayer = false;
 
             if (Physics.Raycast(shootOrigin.position, _meleeDirection, out RaycastHit _hit, 3f))
             {
                 if (_hit.collider.CompareTag("Player"))
                 {
                     _hit.collider.GetComponent<Player>().TakeDamage(meleeDamage, this.id);
+                    hitPlayer = true;
                 }
                 Debug.DrawRay(shootOrigin.position, shootOrigin.position + (_meleeDirection.normalized * 1f), Color.green);
             }
+
+            ServerSend.PlayerMeleed(Server.clients[this.id].player, hitPlayer);
         }
     }
 
@@ -304,10 +309,11 @@ public class Player : MonoBehaviour
         {
             health = 0f;
             controller.enabled = false;
+            playerCollider.enabled = false;
 
             isDead = true;
 
-            this.deaths += 1;
+            deaths += 1;
             if (_damageSourceId != this.id)
             {
                 var _killer = Server.clients[_damageSourceId].player;
@@ -315,6 +321,8 @@ public class Player : MonoBehaviour
 
                 ServerSend.PlayerKills(_killer, this);
             }
+
+            return;
         }
     }
 
@@ -326,6 +334,8 @@ public class Player : MonoBehaviour
         ServerSend.PlayerPosition(this);
 
         controller.enabled = true;
+        playerCollider.enabled = true;
+
         isDead = false;
         tommyGun.ammoCapacity = tommyGun.maxAmmoCapacity;
 
