@@ -49,6 +49,12 @@ public class PlayerController : MonoBehaviour
         {
             ClientSend.PlayerRespawn();
         }
+
+        // Suicide when P is pressed if alive
+        if (!player.isDead && Input.GetKeyDown(KeyCode.P))
+        {
+            ClientSend.PlayerSuicide();
+        }
     }
 
     private void FixedUpdate()

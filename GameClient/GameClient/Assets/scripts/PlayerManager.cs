@@ -43,7 +43,7 @@ public class PlayerManager : MonoBehaviour
     private Quaternion lastRot;
     public Vector3 velocity;
     public bool isGrounded;
-    private float idleToRun;
+    public float idleToRun;
     private bool isIdleToRunChanging;
 
     public GameObject spectatorPrefab;
@@ -69,6 +69,9 @@ public class PlayerManager : MonoBehaviour
         }
 
         UIManager.AmmoCapacity(ammoCapacity.ToString());
+
+        tommyGun.GetComponent<Animator>().keepAnimatorControllerStateOnDisable = true;
+        knife.GetComponent<Animator>().keepAnimatorControllerStateOnDisable = true;
     }
 
     private void Update()
@@ -81,7 +84,7 @@ public class PlayerManager : MonoBehaviour
 
         if (!IsLocalPlayer())
         {
-            healthSlider.value = CalculateHealth();
+            healthSlider.value = CalculateHealthbarValue();
         }
 
         TurnNameTextTowardLocalPlayer();
@@ -102,7 +105,7 @@ public class PlayerManager : MonoBehaviour
 
     private void MovementAnimationAndSounds()
     {
-        if (velocity.magnitude > 0f && isGrounded)
+        if (velocity.magnitude > 0f && isGrounded && !isDead)
         {
             playerAudioSource.volume = PlayerPrefs.GetFloat("Volume", 0.5f);
 
@@ -127,7 +130,7 @@ public class PlayerManager : MonoBehaviour
             }
             //Debug.Log(velocity.magnitude);
         }
-        else if (velocity.magnitude == 0)
+        else
         {
             if (!isIdleToRunChanging && idleToRun != 0) StartCoroutine(ChangeIdleToRun(idleToRun, 0f, .5f));
         }
@@ -150,7 +153,7 @@ public class PlayerManager : MonoBehaviour
         yield break;
     }
 
-    private float CalculateHealth()
+    private float CalculateHealthbarValue()
     {
         return health / maxHealth;
     }
@@ -167,13 +170,14 @@ public class PlayerManager : MonoBehaviour
 
     public void Die()
     {
+        // Hide player models
+        ToggleAllChildMeshrenderers(transform, false);
+
+        // Disable collider
         GetComponent<Collider>().enabled = false;
-        foreach (MeshRenderer _model in model )
-        {
-            _model.enabled = false;
-        }
+
+        // Hide name text
         nameText.SetActive(false);
-        cameraTransform.gameObject.SetActive(false);
 
         isDead = true;
 
@@ -182,7 +186,29 @@ public class PlayerManager : MonoBehaviour
         if (IsLocalPlayer())
         {
             SpawnSpectator();
+
+            // Disable camera and audio listener to avoid console spam
+            cameraTransform.GetComponent<Camera>().enabled = false;
+            cameraTransform.GetComponent<AudioListener>().enabled = false;
+
             UIManager.DeathScreen(true);
+        }
+    }
+
+    void ToggleAllChildMeshrenderers(Transform _transform, bool toggle)
+    {
+        ToggleMeshrender(_transform.root, toggle);
+    }
+
+    private void ToggleMeshrender(Transform _transform, bool toggle)
+    {
+        var renderer =_transform.GetComponent<Renderer>();
+
+        if (renderer != null) renderer.enabled = toggle;
+
+        for (int i = 0; i < _transform.childCount; i++)
+        {
+            ToggleMeshrender(_transform.GetChild(i), toggle);
         }
     }
 
@@ -220,19 +246,22 @@ public class PlayerManager : MonoBehaviour
 
     public void Respawn()
     {
+        // Enable all player models
+        ToggleAllChildMeshrenderers(transform, true);
+        
         GetComponent<Collider>().enabled = true;
+
         DestroySpectator();
-        cameraTransform.gameObject.SetActive(true);
-        foreach (MeshRenderer _model in model)
-        {
-            _model.enabled = true;
-        }
 
         SetHealth(maxHealth);
+
         nameText.SetActive(true);
 
         if (IsLocalPlayer())
         {
+            cameraTransform.GetComponent<Camera>().enabled = true;
+            cameraTransform.GetComponent<AudioListener>().enabled = true;
+
             UIManager.DeathScreen(false);
         }
 

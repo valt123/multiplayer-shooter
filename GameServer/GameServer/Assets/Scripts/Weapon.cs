@@ -8,6 +8,7 @@ public class Weapon
     private float lastFired = 0f;
     private float nextTimeToFire = 0f;
     private float verticalRecoil = 0f;
+
     public float maxRecoil;
     public float recoilIncrease;
 

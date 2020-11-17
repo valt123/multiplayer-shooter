@@ -307,22 +307,29 @@ public class Player : MonoBehaviour
 
         if (health <= 0f)
         {
-            health = 0f;
-            controller.enabled = false;
-            playerCollider.enabled = false;
+            Die(_damageSourceId);
+        }
+    }
 
-            isDead = true;
+    public void Die(int _damageSourceId)
+    {
+        health = 0f;
+        controller.enabled = false;
+        playerCollider.enabled = false;
 
-            deaths += 1;
-            if (_damageSourceId != this.id)
-            {
-                var _killer = Server.clients[_damageSourceId].player;
-                _killer.kills += 1;
+        isDead = true;
 
-                ServerSend.PlayerKills(_killer, this);
-            }
+        deaths += 1;
 
-            return;
+        velocity = Vector3.zero;
+        aerialDirection = Vector3.zero;
+
+        if (_damageSourceId != this.id)
+        {
+            var _killer = Server.clients[_damageSourceId].player;
+            _killer.kills += 1;
+
+            ServerSend.PlayerKills(_killer, this);
         }
     }
 
